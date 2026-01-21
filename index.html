@@ -367,7 +367,7 @@
   }
   .price-large-wrap { font-size: clamp(3rem, 10vw, 4rem); font-weight: 800; color: var(--primary); line-height: 1.1; font-family: 'Oswald', sans-serif; }
   .price-large-unit { font-size: 1.2rem; color: var(--text-light); font-weight: normal; margin-left: 5px; }
-  .price-strike { text-decoration: line-through; color: #94a3b8; font-size: 1.1rem; margin-right: 15px; display:none; } /* 二重価格防止のため非表示に */
+  .price-strike { text-decoration: line-through; color: #94a3b8; font-size: 1.1rem; margin-right: 15px; display:none; }
   .price-card-title { font-size: 1.8rem; margin-bottom: 10px; }
 
   /* メッセージの構造化 (2行強制) */
@@ -1210,7 +1210,6 @@ h1,h2,h3,p,li,span{ overflow-wrap: anywhere; }
 <div style="margin: 30px 0;">
 <div class="price-notes">
   <p>※β版は3月末終了予定。状況により終了時期が前倒しになる可能性があります。</p>
-  <!-- 二重価格防止の表現に変更 -->
   <p>※β版終了後は <strong>価格改定予定</strong> です。<br>（将来的に価格が上がる可能性があります）</p>
 </div>
 <!-- 打ち消し線を削除 -->
@@ -1390,7 +1389,6 @@ h1,h2,h3,p,li,span{ overflow-wrap: anywhere; }
           </div>
         `;
         g.innerHTML += `<div class="step-bar next" style="height:80%">¥${n}</div>`;
-        // 二重価格防止の表現に変更
         g.innerHTML += `<div class="step-bar future far">改定予定</div>`;
       }
     }
