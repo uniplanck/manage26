@@ -16,21 +16,22 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 
 <!-- ====================================================================
-     ★SNSシェア設定 (OGP)★
-     TwitterやLINEでシェアされた時の見た目をここで設定します
+     ★SNSシェア設定 (OGP・Twitter Card)★
      ==================================================================== -->
-<meta content="案件管理シートPro" property="og:title"/>
-<meta content="事務作業に時間を溶かすな。動画クリエイター専用の管理システム、解禁。" property="og:description"/>
-<meta content="website" property="og:type"/>
-<meta content="https://uniplanck.github.io/manage26/" property="og:url"/>
+<meta property="og:title" content="案件管理シートPro | 動画クリエイターのための経営OS" />
+<meta property="og:description" content="事務作業に時間を溶かすな。動画クリエイター専用の管理システム、解禁。" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://uniplanck.github.io/manage26/" />
+<meta property="og:site_name" content="案件管理シートPro" />
 
-<!-- ★ここがサムネイル画像の設定です（推奨サイズ: 1200x630px）★ -->
-<!-- 変更したい場合は content="..." の中身を新しい画像のURLに書き換えてください -->
-<meta content="https://uniplanck.github.io/manage26/manage26ogp.png" property="og:image"/>
+<!-- ★サムネイル画像設定★ -->
+<meta property="og:image" content="https://uniplanck.github.io/manage26/manage26ogp.png" />
 
-<!-- Twitter用の設定 -->
-<meta content="summary_large_image" name="twitter:card"/>
-<meta content="https://uniplanck.github.io/manage26/manage26ogp.png" name="twitter:image"/>
+<!-- Twitter専用設定 -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="案件管理シートPro | 動画クリエイターのための経営OS" />
+<meta name="twitter:description" content="事務作業に時間を溶かすな。動画クリエイター専用の管理システム、解禁。" />
+<meta name="twitter:image" content="https://uniplanck.github.io/manage26/manage26ogp.png" />
 <!-- ==================================================================== -->
 
 <style>
@@ -367,7 +368,7 @@
   }
   .price-large-wrap { font-size: clamp(3rem, 10vw, 4rem); font-weight: 800; color: var(--primary); line-height: 1.1; font-family: 'Oswald', sans-serif; }
   .price-large-unit { font-size: 1.2rem; color: var(--text-light); font-weight: normal; margin-left: 5px; }
-  .price-strike { text-decoration: line-through; color: #94a3b8; font-size: 1.1rem; margin-right: 15px; display:none; }
+  .price-strike { text-decoration: line-through; color: #94a3b8; font-size: 1.1rem; margin-right: 15px; display:none; } 
   .price-card-title { font-size: 1.8rem; margin-bottom: 10px; }
 
   /* メッセージの構造化 (2行強制) */
@@ -1099,7 +1100,7 @@ h1,h2,h3,p,li,span{ overflow-wrap: anywhere; }
 <div class="container">
 <div style="max-width: 800px; margin: 0 auto; text-align: center;">
 <h2 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--primary);">
-          「使いこなせるか不安」<br/> その心配は不要です｡
+          「使いこなせるか不安」<br/>その心配は不要です。
         </h2>
 <p style="color: var(--text-light); margin-bottom: 50px;">
           ツールは導入してからが本番です。<br/>
@@ -1212,14 +1213,18 @@ h1,h2,h3,p,li,span{ overflow-wrap: anywhere; }
   <p>※β版は3月末終了予定。状況により終了時期が前倒しになる可能性があります。</p>
   <p>※β版終了後は <strong>価格改定予定</strong> です。<br>（将来的に価格が上がる可能性があります）</p>
 </div>
-<!-- 打ち消し線を削除 -->
-<!-- <div class="price-strike">¥10,000</div> -->
 <span class="price-large-wrap">
             ¥<span class="d-price num">5,000</span>
 </span>
 <span class="price-large-unit">(税込)</span>
 </div>
 <a class="btn btn-line" href="https://lin.ee/n7CTrqV" id="final-line-cta" rel="noopener" target="_blank"><i class="fa-brands fa-line"></i> 公式LINEで詳細を受け取る</a>
+<!-- LINE追加時の注意書き -->
+<p style="font-size:0.8rem; color:#64748b; margin-top:10px;">
+  ※ メッセージが自動送信されない場合（過去に追加済の方など）は、<br>
+  トーク画面で <span style="font-weight:bold; color:var(--primary);">『案件管理』</span> と送信してください。
+</p>
+
 <!-- アップデート情報 -->
 <div class="update-info" style="margin-top: 30px; text-align: left; background: #eff6ff; padding: 20px; border-radius: 12px; border: 1px solid #dbeafe;">
 <h4 style="color: var(--accent); margin: 0 0 15px; font-size: 1rem; display:flex; align-items:center; gap:8px;">
