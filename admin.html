@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro管理画面</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Base UI Adjustments for Mobile */
+  body { font-family: 'Noto Sans JP', sans-serif; padding: 15px; background: #f1f5f9; color: #334155; margin: 0; }
+  .container { max-width: 800px; margin: 0 auto; padding-bottom: 80px; }
+  .card { background: #fff; padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+  
+  h2 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+  
+  /* Form Layout */
+  .form-grid { display: grid; gap: 15px; grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+  
+  .form-group { margin-bottom: 15px; }
+  label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 0.85rem; color: #64748b; }
+  
+  /* Inputs & Textarea (Touch Friendly) */
+  input, textarea { 
+    width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; 
+    box-sizing: border-box; font-size: 16px; /* Prevent zoom on iOS */
+    background: #f8fafc;
+  }
+  input:focus, textarea:focus { outline: none; border-color: #2563eb; background: #fff; }
+  textarea { min-height: 100px; resize: vertical; }
+
+  /* File Input Customization */
+  .file-input-wrapper { display: flex; gap: 10px; align-items: center; }
+  .file-input-btn {
+    font-size: 0.8rem; background: #e2e8f0; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+  }
+  
+  /* Buttons */
+  button { 
+    width: 100%; padding: 14px; background: #2563eb; color: #fff; 
+    border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1rem;
+    transition: 0.2s; touch-action: manipulation;
+  }
+  button:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
+  button:disabled { background: #cbd5e1; cursor: not-allowed; }
+  
+  /* Cancel Button */
+  #cancel-edit { background: #64748b; margin-top: 10px; display: none; }
+  
+  /* Review List Item */
+  .review-item { 
+    background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; 
+    margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .review-avatar {
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #e2e8f0; flex-shrink: 0;
+  }
+  .review-body { flex: 1; min-width: 0; }
+  .review-name { font-weight: bold; font-size: 0.95rem; display: block; margin-bottom: 2px; }
+  .review-text { font-size: 0.85rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  
+  .review-actions { display: flex; flex-direction: column; gap: 6px; margin-left: 5px; }
+  .btn-sm { 
+    padding: 6px 12px; font-size: 0.75rem; width: auto; border-radius: 6px; min-width: 60px;
+  }
+  .btn-edit { background: #0f172a; }
+  .btn-delete { background: #ef4444; }
+
+  .hidden { display: none; }
+  #login-area { max-width: 400px; margin: 60px auto; text-align: center; }
+  #loading-overlay {
+    position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8);
+    z-index: 999; display: none; justify-content: center; align-items: center; font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Loading -->
+  <div id="loading-overlay">処理中...</div>
+
+  <div class="container">
+    <!-- Login -->
+    <div id="login-area" class="card">
+      <h2 style="justify-content:center; border:none;">管理者ログイン</h2>
+      <input type="email" id="email" placeholder="メールアドレス" style="margin-bottom:15px;">
+      <input type="password" id="pass" placeholder="パスワード" style="margin-bottom:20px;">
+      <button id="btn-login">ログイン</button>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-area" class="hidden">
+      
+      <!-- 1. Status -->
+      <div class="card">
+        <h2>📊 ステータス管理</h2>
+        <div class="form-grid">
+          <div class="form-group"><label>現在価格</label><input type="number" id="cur"></div>
+          <div class="form-group"><label>次価格</label><input type="number" id="nxt"></div>
+          <div class="form-group"><label>残り人数</label><input type="number" id="rem"></div>
+          <div class="form-group"><label>履歴 (例: 5000, 6000)</label><input type="text" id="his"></div>
+        </div>
+        <button id="save-status">設定を反映</button>
+      </div>
+
+      <!-- 2. Reviews -->
+      <div class="card">
+        <h2 id="review-header">🗣️ 口コミ管理</h2>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label>名前 (空欄でXのIDを使用)</label>
+            <input type="text" id="r-name" placeholder="名前">
+          </div>
+          <div class="form-group">
+            <label>プロフィール画像</label>
+            <!-- File Upload -->
+            <div style="margin-bottom:8px;">
+              <input type="file" id="r-file" accept="image/*" style="padding:8px;">
+            </div>
+            <input type="text" id="r-img" placeholder="または画像URLを直接入力">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>口コミ本文</label>
+          <textarea id="r-content" placeholder="お客様の声をここに入力"></textarea>
+        </div>
+        
+        <label>SNSリンク (任意)</label>
+        <div class="form-grid" style="margin-bottom:20px;">
+          <input type="text" id="r-x" placeholder="X (Twitter) URL">
+          <input type="text" id="r-ig" placeholder="Instagram URL">
+          <input type="text" id="r-yt" placeholder="YouTube URL">
+          <input type="text" id="r-tik" placeholder="TikTok URL">
+        </div>
+
+        <button id="add-review">口コミを追加</button>
+        <button id="cancel-edit">編集をキャンセル</button>
+
+        <div style="margin-top:30px; border-top:1px solid #e2e8f0; padding-top:20px;">
+          <label style="margin-bottom:10px;">登録済みリスト</label>
+          <div id="review-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBy8hBH5DNX8GsVvnOfjmyyamc9nIPIR44",
+      authDomain: "manage26-price.firebaseapp.com",
+      projectId: "manage26-price",
+      storageBucket: "manage26-price.firebasestorage.app",
+      messagingSenderId: "405218108343",
+      appId: "1:405218108343:web:3c91b61adac9e9e07ffe32",
+      measurementId: "G-CDWBHCM00C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    // State for Editing
+    let editingId = null;
+
+    // Loading UI
+    const showLoading = (show) => document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+
+    onAuthStateChanged(auth, (user) => {
+      if(user) {
+        document.getElementById('login-area').classList.add('hidden');
+        document.getElementById('main-area').classList.remove('hidden');
+        initStatus();
+        initReviews();
+      }
+    });
+
+    document.getElementById('btn-login').onclick = async () => {
+      try {
+        await signInWithEmailAndPassword(auth, 
+          document.getElementById('email').value,
+          document.getElementById('pass').value
+        );
+      } catch(e) { alert("Login Failed: " + e.message); }
+    };
+
+    // --- Status Logic ---
+    async function initStatus() {
+      const snap = await getDoc(doc(db, "site_config", "status"));
+      if(snap.exists()) {
+        const d = snap.data();
+        document.getElementById('cur').value = d.current_price;
+        document.getElementById('nxt').value = d.next_price;
+        document.getElementById('rem').value = d.remaining;
+        document.getElementById('his').value = d.sold_out_history ? d.sold_out_history.join(', ') : '';
+      }
+    }
+    document.getElementById('save-status').onclick = async () => {
+      showLoading(true);
+      try {
+        const his = document.getElementById('his').value.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
+        await setDoc(doc(db, "site_config", "status"), {
+          current_price: parseInt(document.getElementById('cur').value),
+          next_price: parseInt(document.getElementById('nxt').value),
+          remaining: parseInt(document.getElementById('rem').value),
+          sold_out_history: his
+        });
+        alert("ステータス更新完了！");
+      } catch(e) { alert("Error: " + e.message); }
+      showLoading(false);
+    };
+
+    // --- Review Logic ---
+    function initReviews() {
+      const q = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
+      onSnapshot(q, (snap) => {
+        const list = document.getElementById('review-list');
+        list.innerHTML = "";
+        snap.forEach(d => {
+          const data = d.data();
+          const div = document.createElement('div');
+          div.className = 'review-item';
+          // 管理画面でも画像を表示
+          const avatar = data.image_url 
+            ? `<img src="${data.image_url}" class="review-avatar">` 
+            : `<div class="review-avatar" style="display:flex;align-items:center;justify-content:center;color:#fff;background:#cbd5e1;font-size:20px;">👤</div>`;
+            
+          div.innerHTML = `
+            ${avatar}
+            <div class="review-body">
+              <span class="review-name">${data.name}</span>
+              <div class="review-text">${data.content}</div>
+            </div>
+            <div class="review-actions">
+              <button class="btn-sm btn-edit" data-id="${d.id}">編集</button>
+              <button class="btn-sm btn-delete" data-id="${d.id}">削除</button>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+
+        // Event Listeners
+        document.querySelectorAll('.btn-delete').forEach(b => {
+          b.onclick = async () => { if(confirm("削除しますか？")) await deleteDoc(doc(db, "testimonials", b.dataset.id)); };
+        });
+        document.querySelectorAll('.btn-edit').forEach(b => {
+          b.onclick = () => startEdit(b.dataset.id, snap);
+        });
+      });
+    }
+
+    // 編集モード開始
+    function startEdit(id, snap) {
+      const docSnap = snap.docs.find(d => d.id === id);
+      if(!docSnap) return;
+      const data = docSnap.data();
+
+      document.getElementById('r-name').value = data.name;
+      document.getElementById('r-img').value = data.image_url || "";
+      document.getElementById('r-content').value = data.content;
+      document.getElementById('r-x').value = data.link_x || "";
+      document.getElementById('r-ig').value = data.link_ig || "";
+      document.getElementById('r-yt').value = data.link_yt || "";
+      document.getElementById('r-tik').value = data.link_tik || "";
+      document.getElementById('r-file').value = ""; // ファイル選択はリセット
+
+      editingId = id;
+      document.getElementById('add-review').textContent = "口コミを更新";
+      document.getElementById('add-review').style.background = "#0f172a";
+      document.getElementById('cancel-edit').style.display = "block";
+      document.getElementById('review-header').textContent = "✏️ 口コミを編集";
+      window.scrollTo({ top: document.getElementById('review-header').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    // 編集キャンセル
+    document.getElementById('cancel-edit').onclick = resetForm;
+
+    function resetForm() {
+      editingId = null;
+      document.querySelectorAll('#r-name, #r-img, #r-content, #r-x, #r-ig, #r-yt, #r-tik, #r-file').forEach(i => i.value = "");
+      document.getElementById('add-review').textContent = "口コミを追加";
+      document.getElementById('add-review').style.background = "#2563eb";
+      document.getElementById('cancel-edit').style.display = "none";
+      document.getElementById('review-header').textContent = "🗣️ 口コミ管理";
+    }
+
+    // 追加・更新処理
+    document.getElementById('add-review').onclick = async () => {
+      showLoading(true);
+      try {
+        let rName = document.getElementById('r-name').value;
+        let rImg = document.getElementById('r-img').value;
+        const rContent = document.getElementById('r-content').value;
+        const rX = document.getElementById('r-x').value;
+        const fileInput = document.getElementById('r-file');
+
+        // 1. 画像アップロード処理
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          const storageRef = ref(storage, 'reviews/' + Date.now() + '_' + file.name);
+          await uploadBytes(storageRef, file);
+          rImg = await getDownloadURL(storageRef); // URLを上書き
+        }
+
+        // 2. 名前・画像自動補完 (Xリンクがある場合)
+        if (rX) {
+          try {
+            const urlObj = new URL(rX);
+            const pathParts = urlObj.pathname.split('/').filter(s => s);
+            if (pathParts.length > 0) {
+              const username = pathParts[0];
+              // 名前が空ならユーザーIDを使用
+              if (!rName) rName = "@" + username;
+              // 画像が空ならXの画像を仮設定 (※表示されないリスクあり)
+              // if (!rImg) rImg = `https://unavatar.io/twitter/${username}`; // unavatarなどのサービスを使うと確実
+            }
+          } catch(e) { console.log(e); }
+        }
+
+        const docData = {
+          name: rName || "名無しさん",
+          image_url: rImg,
+          content: rContent,
+          link_x: rX,
+          link_ig: document.getElementById('r-ig').value,
+          link_yt: document.getElementById('r-yt').value,
+          link_tik: document.getElementById('r-tik').value,
+          createdAt: serverTimestamp() // 更新時もタイムスタンプ更新（並び順維持のため調整可）
+        };
+
+        if (editingId) {
+          // 更新
+          await updateDoc(doc(db, "testimonials", editingId), docData);
+          alert("更新しました！");
+        } else {
+          // 新規追加
+          await addDoc(collection(db, "testimonials"), docData);
+          alert("追加しました！");
+        }
+        
+        resetForm();
+
+      } catch(e) {
+        alert("エラー: " + e.message);
+        console.error(e);
+      }
+      showLoading(false);
+    };
+  </script>
+</body>
+</html>

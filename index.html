@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>案件管理シートPro | 動画クリエイターのための経営OS</title>
+<meta content="なぜ、あのクリエイターは納期を守りながら高単価案件を回せるのか？動画編集者・ディレクター専用、買い切り型・最強案件管理システム。" name="description"/>
+<link href="manage26.ico" rel="icon" type="image/x-icon"/>
+<!-- 高速化: メイン画像を先読み -->
+<link as="image" href="https://uniplanck.github.io/manage26/07_案件シート.png" rel="preload"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&amp;display=swap" rel="stylesheet"/>
+<!-- FontAwesome Latest for X Icon -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<meta content="案件管理シートPro" property="og:title"/>
+<meta content="事務作業に時間を溶かすな。動画クリエイター専用の管理システム、解禁。" property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="https://uniplanck.github.io/manage26/" property="og:url"/>
+<meta content="https://uniplanck.github.io/manage26/07_案件シート.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<style>
+  /* =========================================
+     Base & Typography
+     ========================================= */
+  :root {
+    --primary: #0f172a;
+    --primary-light: #1e293b;
+    --accent: #2563eb;
+    
+    /* CTA Colors */
+    --cta-main: #f97316;
+    --cta-hover: #ea580c;
+    --cta-shadow: rgba(249, 115, 22, 0.4);
+
+    --text-main: #334155;
+    --text-light: #64748b;
+    --bg-light: #f8fafc;
+    --white: #ffffff;
+    
+    --font-sans: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    margin: 0; padding: 0;
+    color: var(--text-main);
+    line-height: 1.8;
+    background-color: var(--white);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    padding-bottom: 120px;
+  }
+
+  /* Typography - PC Default */
+  h1 { 
+    color: var(--primary); font-weight: 800; letter-spacing: -0.03em; line-height: 1.3;
+    font-size: clamp(2.4rem, 5vw, 4.5rem);
+    text-align: center;
+  }
+  h2 { 
+    color: var(--primary); font-weight: 800; letter-spacing: -0.02em; line-height: 1.4;
+    font-size: clamp(1.8rem, 4vw, 2.5rem); 
+    text-align: center;
+  }
+  h3 { 
+    color: var(--primary); font-weight: 800; letter-spacing: -0.02em; line-height: 1.4;
+    font-size: clamp(1.4rem, 3vw, 1.8rem); 
+  }
+  p { margin-bottom: 1.5em; font-size: 1.05rem; letter-spacing: 0.03em; }
+  
+  a { text-decoration: none; transition: 0.3s; color: inherit; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  img { max-width: 100%; height: auto; display: block; }
+
+  /* Utilities */
+  .ib { display: inline-block; white-space: nowrap; } 
+  .pc-br { display: block; content: ""; margin-top: 0; }
+  .sp-br { display: none; }
+
+  .nowrap { white-space: nowrap; }
+  .no-wrap { white-space: nowrap; }
+  .balance { text-wrap: balance; }
+
+  /* Emphasis chip */
+  .gs-gas-highlight{
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(96,165,250,0.25) 0%, rgba(37,99,235,0.35) 100%);
+    border: 1px solid rgba(96,165,250,0.55);
+    color: #ffffff;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+  }
+
+  /* Comparison right-value helpers (mobile) */
+  .comp-right-strong{ color: var(--primary); font-weight: 900; }
+  .comp-subnote{ font-size: 0.7rem; font-weight: 600; color: #94a3b8; }
+  #final-pricing-anchor{ scroll-margin-top: 12px; }
+
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline; 
+  }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; position: relative; }
+
+  /* 注釈テキスト */
+  .note-text {
+    font-size: 0.85rem; color: #94a3b8; margin-top: 25px;
+    text-align: center;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+  .note-text ul { list-style-type: none; padding: 0; margin: 0; }
+  .note-text li {
+    margin-bottom: 8px; padding-left: 1.2em; text-indent: -1.2em;
+    text-align: left; line-height: 1.6;
+  }
+  .note-text li::before {
+    content: "※"; margin-right: 5px; color: var(--accent); font-weight: bold;
+  }
+  @media (min-width: 601px) {
+    .note-text { display: inline-block; text-align: left; width: 100%; max-width: 700px; }
+  }
+
+  /* =========================================
+     CTA Buttons
+     ========================================= */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 20px 40px; 
+    background: linear-gradient(135deg, var(--cta-main) 0%, #fb923c 100%);
+    color: #fff;
+    font-weight: 700; border-radius: 50px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 8px 25px var(--cta-shadow); 
+    font-size: 1.2rem;
+    border: none; cursor: pointer; text-align: center;
+    width: 100%; max-width: 480px;
+    white-space: nowrap; 
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::after {
+    content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+    transform: skewX(-25deg); animation: shine 6s infinite;
+  }
+  @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+  .btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(249, 115, 22, 0.5);
+    filter: brightness(1.1);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn i { margin-right: 10px; font-size: 1.4rem; }
+
+  /* Browser Mockup */
+  .browser-mockup {
+    border-radius: 12px;
+    box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25);
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.08);
+    transition: transform 0.4s ease;
+  }
+  .browser-header {
+    background: #f1f5f9; padding: 10px 16px; display: flex; gap: 8px; border-bottom: 1px solid #e2e8f0; height: 36px; align-items: center;
+  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .browser-dot.red { background-color: #ef4444; }
+  .browser-dot.yellow { background-color: #eab308; }
+  .browser-dot.green { background-color: #22c55e; }
+  .browser-mockup img { width: 100%; display: block; }
+
+  /* =========================================
+     Sections
+     ========================================= */
+
+  /* HERO */
+  .hero {
+    padding: 140px 0 100px;
+    background: radial-gradient(circle at 50% 30%, #f8fafc 0%, #fff 70%);
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff7ed; color: #ea580c; 
+    padding: 6px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; margin-bottom: 24px;
+    border: 1px solid #fed7aa;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.1);
+  }
+  .hero h1 { text-align: center; } 
+  .hero p {
+    color: var(--text-light); max-width: 680px; margin: 0 auto 40px; font-size: 1.15rem;
+    line-height: 1.8; text-align: center; 
+  }
+  .hero-visual {
+    margin-top: 80px; position: relative; max-width: 1000px; margin-left: auto; margin-right: auto;
+    height: auto; padding-bottom: 5%; 
+  }
+  .hero-img-main { width: 80%; margin: 0 auto; position: relative; z-index: 2; }
+  .hero-img-sub {
+    position: absolute; width: 55%; bottom: -15%; right: -2%; z-index: 3;
+    box-shadow: 0 40px 70px -10px rgba(0, 0, 0, 0.35);
+  }
+
+  /* STORY */
+  .story { background: var(--primary); color: #fff; padding: 100px 0; }
+  .story-content { max-width: 800px; margin: 0 auto; }
+  .story h2 { color: #fff; margin-bottom: 40px; }
+  .story p { opacity: 0.9; font-size: 1.1rem; text-align: justify; line-height: 2; }
+  .story-highlight { color: #60a5fa; font-weight: bold; background: rgba(96, 165, 250, 0.15); padding: 0 6px; }
+
+  /* FEATURES */
+  .features { padding: 120px 0; background: #fff; }
+  .feature-block { display: flex; align-items: center; gap: 80px; margin-bottom: 160px; }
+  .feature-block:last-child { margin-bottom: 0; }
+  .feature-block:nth-child(even) { flex-direction: row-reverse; }
+  .feature-num { font-size: 5rem; font-weight: 900; color: #e2e8f0; line-height: 1; margin-bottom: 15px; font-family: 'Oswald', sans-serif; }
+  .feature-text { flex: 1; text-align: left; }
+  .feature-title { margin-bottom: 25px; text-align: left; }
+  .feature-text p { font-size: 1.05rem; color: var(--text-light); }
+  .feature-visual { flex: 1.2; }
+
+  /* Why GAS Section (New Class for padding control) */
+  .why-gas-section {
+    padding: 100px 0;
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* COMPARISON */
+  .comparison { padding: 100px 0 80px; background: #fff; }
+  .comp-container {
+    display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: end;
+    gap: 0; max-width: 980px; margin: 60px auto 80px;
+  }
+  .comp-col {
+    padding: 30px 20px; border: 1px solid #e2e8f0; background: #fff; text-align: center; position: relative;
+  }
+  .comp-col.left { border-radius: 16px 0 0 16px; border-right: none; z-index: 1; }
+  .comp-col.right { border-radius: 0 16px 16px 0; border-left: none; z-index: 1; }
+  .comp-col.pro {
+    background: #fff; border: 3px solid var(--accent); border-radius: 16px;
+    padding: 50px 20px 40px; box-shadow: 0 30px 60px -15px rgba(37, 99, 235, 0.2);
+    z-index: 10; transform: scale(1.05); transform-origin: center bottom;
+  }
+  .comp-badge {
+    position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    background: var(--primary); color: #fff; padding: 6px 20px;
+    border-radius: 20px; font-weight: 900; font-size: 0.85rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); white-space: nowrap; z-index: 20; letter-spacing: 0.05em;
+  }
+  .pro-header-bg {
+    background: var(--primary); color: #fff; padding: 15px; border-radius: 8px 8px 0 0;
+    margin: -50px -23px 20px -23px; position: relative; border-bottom: 3px solid var(--accent);
+  }
+  .comp-title { font-weight: 700; font-size: 1.1rem; color: #64748b; margin-bottom: 15px; }
+  .comp-title.main { color: #fff; font-size: 1.3rem; margin-bottom: 0; }
+  .comp-price { font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin-bottom: 30px; line-height: 1.2; }
+  .comp-price small { display: block; font-size: 0.8rem; color: #94a3b8; font-weight: normal; margin-top: 5px; }
+  .comp-price.accent { color: var(--accent); font-size: 2.2rem; font-family: 'Oswald', sans-serif; }
+  .comp-price.accent small { color: var(--primary); font-weight: bold; font-family: var(--font-sans); }
+  .comp-row { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; min-height: 80px; }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; }
+  
+  /* 【修正】アイコンとテキストの垂直揃えを強化 */
+  .comp-val { 
+    display: flex; align-items: center; justify-content: center; gap: 6px; 
+    font-weight: bold; width: 100%; height: 100%; min-height: 24px;
+  }
+  .comp-val i { font-size: 1.2rem; line-height: 1; display:flex; align-items:center; }
+  .comp-val span { display: flex; align-items: center; line-height: 1.2; }
+
+  .icon-cross { color: #cbd5e1; } .icon-check { color: var(--accent); } .icon-warn { color: #eab308; }
+  
+  .comp-mobile { display: none; }
+  .comp-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+  .comp-card.pro { border: 2px solid var(--accent); background: #eff6ff; position: relative; overflow: hidden; }
+  
+  /* 【修正】バッジの位置とサイズ調整 */
+  .comp-card.pro::after { 
+    content: "RECOMMENDED"; 
+    position: absolute; 
+    top: 14px;
+    right: -44px; /* 余白を確保して文字欠け防止 */
+    background: var(--accent); color: #fff; 
+    font-size: 0.6rem;
+    padding: 4px 48px; 
+    transform: rotate(45deg); 
+    font-weight: 900; 
+    letter-spacing: 0.08em;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  
+  .comp-card h4 { text-align: center; margin: 0 0 15px; font-size: 1.1rem; color: var(--text-main); }
+  .comp-list { font-size: 0.9rem; }
+  .comp-list li {
+    border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .comp-list li span:first-child { color: #64748b; font-size: 0.85rem; font-weight: bold; }
+  .comp-list li span:last-child { text-align: right; display: inline-flex; justify-content: flex-end; align-items: baseline; gap: 6px; white-space: nowrap; }
+
+  /* VOICES */
+  .voices { background: #f1f5f9; padding: 100px 0; }
+  .voices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 50px; }
+  .voice-card {
+    background: #fff; padding: 30px; border-radius: 16px;
+    border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+  }
+  .voice-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+  .voice-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; }
+  .voice-avt { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #e2e8f0; flex-shrink: 0; }
+  .voice-meta h4 { font-size: 1rem; margin: 0; font-weight: bold; color: var(--primary); }
+  .voice-sns { display: flex; gap: 8px; margin-top: 4px; }
+  .sns-icon {
+    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; color: #fff; font-size: 0.8rem; transition: opacity 0.2s;
+  }
+  .sns-icon:hover { opacity: 0.8; }
+  .voice-body { font-size: 0.95rem; color: var(--text-main); line-height: 1.6; }
+
+  /* PRICING CARD */
+  .pricing-section { background: #fff; padding: 100px 0; }
+  .price-card {
+    background: #fff; border-radius: 24px; padding: 70px 30px;
+    text-align: center; max-width: 640px; margin: 0 auto;
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0; position: relative; overflow: hidden;
+  }
+  .price-card::after {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 8px;
+    background: linear-gradient(90deg, var(--accent), #60a5fa);
+  }
+  .price-large-wrap { font-size: clamp(3rem, 10vw, 4rem); font-weight: 800; color: var(--primary); line-height: 1.1; font-family: 'Oswald', sans-serif; }
+  .price-large-unit { font-size: 1.2rem; color: var(--text-light); font-weight: normal; margin-left: 5px; }
+  .price-strike { text-decoration: line-through; color: #94a3b8; font-size: 1.1rem; margin-right: 15px; display:none; } /* 二重価格防止のため非表示に */
+  .price-card-title { font-size: 1.8rem; margin-bottom: 10px; }
+
+  /* メッセージの構造化 (2行強制) */
+  .price-card-message {
+    margin-bottom: 30px;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+  .price-card-message p{
+    margin: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  .step-graph { display: flex; justify-content: center; align-items: flex-end; gap: 4px; height: 120px; margin: 40px auto; max-width: 360px; width: 100%; }
+  .step-bar {
+    flex: 1; background: #e2e8f0; border-radius: 6px 6px 0 0; position: relative;
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; 
+    font-size: 0.75rem; color: #64748b; transition: 0.5s; font-weight: bold; white-space: nowrap;
+  }
+  
+  .step-graph-caption{
+    margin: 14px auto 10px;
+    width: fit-content;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: #64748b;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    font-weight: 800;
+  }
+  .step-bar.next{
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+    border: 1px dashed #cbd5e1;
+    box-shadow: none !important;
+  }
+  .step-bar.future{
+    background: #f8fafc !important;
+    color: #94a3b8 !important;
+    border: 1px dashed #e2e8f0;
+    box-shadow: none !important;
+  }
+  .step-bar.far{
+    background: #fbfdff !important;
+    color: #a1a1aa !important;
+    border-color: #eef2f7 !important;
+  }
+  .price-notes{
+    margin: 14px 0 6px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+  }
+  .price-notes p{
+    margin: 0;
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.5;
+  }
+  .price-notes p + p{ margin-top: 6px; }
+.step-bar.active { background: var(--cta-main); color: #fff; font-weight: bold; box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); z-index: 2; }
+  .step-bar.sold { background: #cbd5e1; height: 30% !important; text-decoration: line-through; opacity: 0.5; }
+  .step-bar.future { height: 100% !important; background: #94a3b8; color: #fff; }
+  .step-label { position: absolute; top: -30px; width: 100%; text-align: center; font-size: 0.8rem; font-weight: 900; color: var(--cta-main); }
+  
+  .stock-alert {
+    background: #fef2f2; color: #ef4444; padding: 8px 20px; border-radius: 50px;
+    font-size: 0.95rem; font-weight: bold; display: inline-block; margin-bottom: 25px;
+    border: 1px solid #fee2e2; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+  /* Video Embed Area */
+  .video-embed-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #f1f5f9;
+    border-radius: 12px;
+    margin-top: 40px;
+    border: 1px solid #e2e8f0;
+  }
+  .video-embed-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .video-placeholder {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; /* 背景を暗くするので白文字に */
+    font-weight: bold; font-size: 1.1rem;
+    flex-direction: column; gap: 10px;
+    background: rgba(0,0,0,0.4); /* 暗くして文字を見やすく */
+    cursor: pointer; /* クリックできることを示す */
+    z-index: 10;
+    transition: opacity 0.3s;
+  }
+  .video-placeholder:hover {
+    background: rgba(0,0,0,0.2);
+  }
+  .video-placeholder i {
+    font-size: 4rem; /* アイコンを少し大きく */
+    color: #fff; /* アイコンも白く */
+    opacity: 0.9;
+  }
+
+  /* FOOTER */
+  footer { background: #f8fafc; padding: 60px 0 40px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 0.85rem; color: #94a3b8; }
+  .footer-links a { margin: 0 15px; color: #64748b; } .footer-links a:hover { color: var(--primary); }
+
+  /* MOBILE STICKY */
+  .mobile-sticky {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+    border-top: 1px solid #e2e8f0; padding: 12px 20px 20px; z-index: 100;
+    display: none; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); text-align: center;
+  }
+  .mobile-sticky .btn { width: 100%; max-width: 480px; margin: 0 auto; padding: 16px; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(249, 115, 22, 0.3); }
+
+  /* LIGHTBOX */
+  .lightbox-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.95); z-index: 9999; display: none;
+    justify-content: center; align-items: center; padding: 20px;
+  }
+  .lightbox-overlay.active { display: flex; }
+  .lightbox-img { max-width: 100%; max-height: 90vh; border-radius: 8px; }
+  .lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; }
+
+  /* =========================================
+     Responsive Tweaks (Mobile Optimization)
+     ========================================= */
+  @media (max-width: 1024px) {
+    .container { padding: 0 30px; }
+    .hero-img-main { width: 90%; }
+    .hero-img-sub { width: 60%; right: -5%; bottom: -20%; }
+  }
+  @media (max-width: 768px) {
+    .comp-container { display: none; }
+    .comp-mobile { display: block; }
+    .mobile-sticky { display: block; }
+    .hero { padding: 100px 0 80px; }
+    .feature-block { gap: 40px; }
+    .feature-title { font-size: 1.8rem; }
+    .sp-br { display: block; } 
+    .pc-br { display: none; }
+  }
+  @media (min-width: 769px) {
+    .sp-br { display: none; }
+  }
+  
+  /* --- Mobile Optimization (<=600px) --- */
+  @media (max-width: 600px) {
+    body { font-size: 15px; }
+    .container { padding: 0 5%; } /* %ベースの余白 */
+    
+    /* Hero */
+    .hero { padding: 100px 0 60px; }
+    .pricing-section { padding: 70px 0; }
+    
+    /* タイトル調整 (改行制御) */
+    .hero h1 { 
+      font-size: 2rem; 
+      margin-bottom: 20px; line-height: 1.35; 
+      text-align: center; /* タイトルは中央維持 */
+      white-space: normal; /* PC設定をリセット */
+    } 
+    h1 br { display: block; } 
+
+    /* サブコピー調整: 見切れ修正 */
+    .hero-sub{
+      font-size: clamp(0.95rem, 3.7vw, 1.12rem);
+      text-align: center;
+      margin: 0; padding: 0;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+    .hero-sub span.nowrap {
+      white-space: normal !important; /* スマホでは折り返しを許可 */
+      display: inline-block;
+    }
+    
+    /* ヒーロー画像調整 */
+    .hero-visual { margin-top: 50px; padding-bottom: 0; display: flex; flex-direction: column; align-items: center; }
+    .hero-img-main { width: 100%; z-index: 2; margin-bottom: -15%; } 
+    .hero-img-sub { position: relative; width: 90%; right: auto; bottom: auto; margin-left: 20%; z-index: 3; }
+    
+    /* 悩み訴求 */
+    .pain-h2 { font-size: clamp(1.2rem, 5.2vw, 1.6rem) !important; line-height: 1.25 !important; }
+    .pain-h2 span { display: inline !important; }
+    .pain-h2 .nowrap { white-space: nowrap !important; }
+    
+    /* Story & Features */
+    .story { padding: 60px 0; }
+    .story h2 { font-size: 1.6rem; margin-bottom: 25px; line-height: 1.4; text-align: center; }
+    .story p { 
+        font-size: 0.95rem; 
+        text-align: justify; /* 両端揃え */
+        text-justify: inter-ideograph;
+        padding: 0 10px; 
+    }
+
+    .features { padding: 60px 0; }
+
+    /* Why GAS Section Mobile Padding */
+    .why-gas-section {
+      padding: 50px 0; /* 半分に調整 */
+    }
+
+    .feature-block, .feature-block:nth-child(even) { 
+      flex-direction: column; /* 全て縦並び */
+      gap: 30px; margin-bottom: 80px; 
+    }
+    .feature-title { font-size: 1.6rem; margin-bottom: 15px; text-align: center; }
+    .feature-text p { 
+        text-align: justify; /* 両端揃え */
+        text-justify: inter-ideograph;
+        padding: 0 5px; 
+    }
+    
+    .feature-visual { 
+      order: 2; /* Flexboxで順序指定 */
+      width: 100%; margin: 0;
+    }
+    .feature-text { order: 1; }
+
+    .feature-visual .browser-mockup {
+      border-radius: 12px; 
+      box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.2);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    /* Pricing & Notes */
+    .pricing-section { padding: 60px 0; }
+    .price-card { padding: 40px 20px; border-radius: 20px; } 
+    .price-card-title { font-size: 1.5rem; line-height: 1.4; }
+    .price-strike { font-size: 0.9rem; display: block; margin-right: 0; margin-bottom: 5px; }
+    
+    /* Note text justify */
+    .note-text { 
+        text-align: left; /* リストは左揃え */
+        margin-top: 25px; padding: 20px; 
+    }
+    
+    /* Button Optimization (1 line enforced) */
+    .btn { 
+      width: 100%; 
+      padding: 16px 15px; 
+      font-size: 0.95rem; 
+      white-space: nowrap; 
+      height: auto; 
+      line-height: 1.4;
+    }
+    .btn i { margin-right: 6px; font-size: 1.1rem; }
+
+    /* メッセージのフォントサイズ自動調整 (clampを使用) */
+    .price-card-message p{
+    margin: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+    
+    /* なぜ... の部分のスマホ修正 */
+    /* フレックスボックスで縦積みに変更 */
+    .why-gas-line {
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    /* なぜ「買い切り型」なのか？の1行調整 (iPhone14Pro対応) */
+    .why-buy-h2 {
+      white-space: nowrap;
+      font-size: clamp(1.4rem, 5vw, 1.8rem) !important; /* 少し小さくして収める */
+    }
+
+    /* Update info (年内アップデート項目の改行を防ぐ) */
+    .update-info li { white-space: nowrap; font-size: clamp(0.82rem, 3.5vw, 0.9rem); }
+    .update-info small { font-size: 0.82em; }
+  }
+
+.btn-line{
+  background: #06C755 !important;
+  border-color: #06C755 !important;
+  box-shadow: 0 14px 30px rgba(6,199,85,.22);
+}
+.btn-line:hover{ filter: brightness(.98); }
+.btn-line:active{ transform: translateY(1px); }
+
+/* Slightly wider phones / small tablets */
+@media (max-width: 820px){
+  #final-pricing { scroll-margin-top: 92px; }
+  .mobile-sticky { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+
+
+/* ===== v5 mobile polish fixes ===== */
+html, body { overflow-x: hidden; }
+
+.num{
+  font-family: var(--num-font, ui-sans-serif, system-ui, -apple-system, "Inter", "SF Pro Display", "Hiragino Sans", "Noto Sans JP", sans-serif);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "ss01" 1;
+}
+
+/* unify price number look */
+.price-large-wrap,
+.step-bar,
+.compare-card .price,
+.compare-card .price .amount,
+.d-price, .d-next, .d-future, .d-remaining{
+  font-family: var(--num-font, ui-sans-serif, system-ui, -apple-system, "Inter", "SF Pro Display", "Hiragino Sans", "Noto Sans JP", sans-serif);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hero headline: exactly 2 lines, no horizontal scroll */
+.hero-h1{
+  margin-top: 18px;
+  margin-bottom: 18px;
+  line-height: 1.05;
+  text-align: center;
+}
+.hero-line{
+  display:block;
+  width:100%;
+  white-space: nowrap;
+  text-wrap: nowrap;
+}
+.hero-line1{
+  font-size: clamp(34px, 8vw, 68px);
+  letter-spacing: -0.02em;
+}
+.hero-line2{
+  font-size: clamp(34px, 8vw, 68px);
+  letter-spacing: -0.02em;
+}
+
+
+
+/* Tighter hero on small phones to prevent clipping */
+@media (max-width: 420px){
+  .hero-h1{ padding-inline: 10px; }
+  .hero-line1, .hero-line2{
+    font-size: clamp(28px, 7.2vw, 56px);
+  }
+}
+
+/* Make hero-sub wrap nicely (remove forced nowrap if present elsewhere) */
+.hero-sub{ white-space: normal; text-wrap: balance; }
+
+/* Cold sweat heading: 2 lines on mobile, no overflow */
+.two-line-mobile{ display:inline-block; }
+.two-line-mobile .line1,
+.two-line-mobile .line2{ display:inline; white-space: nowrap; }
+@media (max-width: 520px){
+  .two-line-mobile .line1,
+  .two-line-mobile .line2{
+    display:block;
+    width:100%;
+    white-space: nowrap;
+    font-size: clamp(22px, 6.2vw, 30px);
+    line-height: 1.2;
+  }
+}
+
+/* Why GAS heading: always single line for main phrase */
+.why-gas-h2{
+  color:#fff;
+  text-align:center;
+  margin-bottom:40px;
+}
+.why-gas-line{
+  display:flex;
+  flex-wrap:nowrap;
+  justify-content:center;
+  align-items:center;
+  gap: .35em;
+  white-space:nowrap;
+}
+.why-gas-pre,
+.why-gas-post{ white-space:nowrap; }
+.gs-gas-highlight{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+.why-gas-sub{
+  margin-top: 14px;
+  font-size: clamp(0.98rem, 3.8vw, 1.2rem);
+  font-weight: 500;
+  opacity: 0.85;
+}
+@media (max-width: 520px){
+  .why-gas-line{
+    font-size: clamp(16px, 4.4vw, 26px);
+    gap: .28em;
+  }
+  .gs-gas-highlight{
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
+}
+
+/* Price message: never ellipsis */
+.price-card-message p{ white-space: normal !important; overflow: visible !important; text-overflow: unset !important; }
+
+/* Prevent long Japanese strings from causing overflow */
+h1,h2,h3,p,li,span{ overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<script>
+    const CONFIG_DEFAULTS = {
+      price: { current: 5000, next: 6000, future: 15000, remaining: 10 },
+      links: { checkout: "https://lin.ee/n7CTrqV", contact: "https://forms.google.com/..." }
+    };
+
+    // Smooth Scroll to final pricing (NOT the comparison section)
+    function scrollToPricing() {
+      const el = document.getElementById('final-pricing-anchor') || document.getElementById('final-pricing');
+      if (!el) return;
+      const y = el.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    // Bind the final LINE CTA link
+    document.addEventListener('DOMContentLoaded', () => {
+      const lineHref = CONFIG_DEFAULTS?.links?.checkout;
+      const a = document.getElementById('final-line-cta');
+      const corp = document.getElementById('corp-line-link');
+      if (lineHref) {
+        if (a) a.setAttribute('href', lineHref);
+        if (corp) corp.setAttribute('href', lineHref);
+      }
+    });
+  </script>
+<section class="hero">
+<div class="container">
+<div style="text-align:center;">
+<span class="hero-tag"><i class="fas fa-flask"></i> Beta Version 2026</span>
+</div>
+<h1 class="hero-h1">
+  <span class="hero-line hero-line1">クリエイターを名乗るなら､</span>
+  <span class="text-gradient hero-line hero-line2">事務作業に時間を溶かすな｡</span>
+</h1>
+<!-- スマホ修正: 見切れを防ぐため、強制改行を入れる -->
+<p class="hero-sub hero-sub-1" style="margin-bottom:0;">
+  <span class="nowrap">動画編集者・ディレクターのために<br class="sp-br">極限まで進化した、</span>
+</p>
+<p class="hero-sub hero-sub-2" style="margin-bottom:40px;"><span class="nowrap">買い切り型・最強案件管理システム。</span></p>
+<div style="text-align:center;">
+<button class="btn" id="hero-cta" onclick="scrollToPricing()">
+<i class="fa-brands fa-line"></i> 公式LINEで詳細を受け取る
+        </button>
+</div>
+<div style="font-size:0.85rem; color:#94a3b8; margin-top:15px; font-weight:bold; text-align:center;">
+        ※ 現在 <span class="d-remaining num" style="color:var(--cta-main); font-size:1.1rem;">10</span> 名限定の特別価格で案内中
+      </div>
+<div class="hero-visual">
+<div class="browser-mockup hero-img-main">
+<div class="browser-header"><div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div></div>
+<img alt="メイン画面" loading="eager" src="07_案件シート.png"/>
+</div>
+<div class="browser-mockup hero-img-sub">
+<div class="browser-header"><div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div></div>
+<img alt="収支確認" src="03_一括収支.png"/>
+</div>
+</div>
+</div>
+</section>
+<section style="padding: 100px 0; background: #fff;">
+<div class="container">
+<!-- 行間を詰める修正 -->
+<h2 class="pain-h2" style="text-align:center; font-size:2rem; margin-bottom:50px; line-height:1.2;">
+  <span class="text-gradient two-line-mobile">
+    <span class="line1">こんな「冷や汗」をかいた経験</span>
+    <span class="line2">ありませんか？</span>
+  </span>
+</h2>
+<div style="max-width:800px; margin:0 auto; background:#f8fafc; border:1px solid #e2e8f0; border-radius:20px; padding:40px 30px;">
+<ul style="display:flex; flex-direction:column; gap:20px;">
+<li style="display:flex; align-items:start; gap:15px;">
+<i class="fas fa-check" style="color:#ef4444; font-size:1.2rem; margin-top:4px; flex-shrink:0;"></i>
+<!-- 文字サイズ縮小 -->
+<span style="font-size:0.9rem; font-weight:bold; color:#334155;">「あの案件、どうなってたっけ？」と<br class="sp-br"/>チャットを数十分遡って確認している</span>
+</li>
+<li style="display:flex; align-items:start; gap:15px;">
+<i class="fas fa-check" style="color:#ef4444; font-size:1.2rem; margin-top:4px; flex-shrink:0;"></i>
+<span style="font-size:0.9rem; font-weight:bold; color:#334155;">納品した気になっていたら、<br class="sp-br"/>実は「修正依頼」が来ていて納期当日に青ざめる</span>
+</li>
+<li style="display:flex; align-items:start; gap:15px;">
+<i class="fas fa-check" style="color:#ef4444; font-size:1.2rem; margin-top:4px; flex-shrink:0;"></i>
+<span style="font-size:0.9rem; font-weight:bold; color:#334155;">おしゃれなNotionを作ろうとして、<br class="sp-br"/>管理ツールの構築自体に時間を溶かしてしまった</span>
+</li>
+<li style="display:flex; align-items:start; gap:15px;">
+<i class="fas fa-check" style="color:#ef4444; font-size:1.2rem; margin-top:4px; flex-shrink:0;"></i>
+<span style="font-size:0.9rem; font-weight:bold; color:#334155;">請求書を作る時になって<br class="sp-br"/>「あ、これいくらだっけ...」と契約書を探し回る</span>
+</li>
+</ul>
+<p style="margin-top:30px; text-align:center; font-weight:bold; color:#ef4444;">
+          <span class="nowrap">その悩み、能力不足ではありません。</span><br/>「仕組み」がないだけです。
+        </p>
+</div>
+</div>
+</section>
+<section class="story">
+<div class="container story-content">
+<h2>既存のツールでは、<br/>我々の現場に追いつかない</h2>
+<p>
+        開発者の樹央（なお）です。
+        動画編集者からキャリアを始め、2ヶ月でディレクターへ。そして累計50社以上の動画運用を統括してきました。<br/><br/>
+        クリエイターの苦悩、ディレクターの重圧、組織の混乱。すべてを見てきたからこそ断言します。
+        <span class="story-highlight">「案件管理をおろそかにする者は、必ず信用を失う」</span>と。<br/><br/>
+        エンジニアとしてのGAS技術（7,000行超のコード）と、10年以上のDB知識をすべて注ぎ込み、構想6ヶ月をかけて「動画制作のプロ」専用のシステムを開発しました。
+      </p>
+</div>
+</section>
+<section class="features">
+<div class="container">
+<!-- Block 1 -->
+<div class="feature-block">
+<div class="feature-text">
+<div class="feature-num">01</div>
+<h3 class="feature-title">納期遅れを根絶する<br/>自動ガントチャート</h3>
+<p>案件情報を入力するだけで、美しいガントチャートが自動生成されます。プロジェクトの重なりを可視化し、リスクを回避。</p>
+</div>
+<div class="feature-visual browser-mockup">
+<div class="browser-header"><div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div></div>
+<img alt="ガントチャート" src="06_案件gantt.png"/>
+</div>
+</div>
+<!-- Block 2 -->
+<div class="feature-block">
+<div class="feature-text">
+<div class="feature-num">02</div>
+<h3 class="feature-title">あなたの「時給」を<br/>直視したことはありますか？</h3>
+<p>月ごとの売上推移、利益率、経費バランスを自動グラフ化。確定申告の準備もこれで完了です。</p>
+</div>
+<div class="feature-visual browser-mockup">
+<div class="browser-header"><div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div></div>
+<img alt="通期収支" src="04_通期収支.png"/>
+</div>
+</div>
+<!-- Block 3 -->
+<div class="feature-block">
+<div class="feature-text">
+<div class="feature-num">03</div>
+<h3 class="feature-title"><span class="nowrap">「探す時間」と「報告する手間」</span><br/>すべてゼロへ</h3>
+<p>強力なフィルタ検索とChatwork自動通知連携で、報連相コストを極限まで削減。クリエイティブに集中する時間を創出します。</p>
+</div>
+<div class="feature-visual">
+<div class="browser-mockup" style="margin-bottom: 30px;">
+<div class="browser-header"><div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div></div>
+<img alt="検索フィルタ" src="05_案件検索.png"/>
+</div>
+<div class="browser-mockup">
+<div class="browser-header"><div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div></div>
+<img alt="チャットワーク連携" src="01_cw.png"/>
+</div>
+</div>
+</div>
+<!-- Block 4 -->
+<div class="feature-block">
+<div class="feature-text">
+<div class="feature-num">04</div>
+<h3 class="feature-title">あなた仕様にカスタマイズ。</h3>
+<p>設定画面から、あなたの業務フローに合わせて管理項目を自由に追加・削除可能。独自の運用フローを構築できます。</p>
+</div>
+<div class="feature-visual browser-mockup">
+<div class="browser-header"><div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div></div>
+<img alt="設定画面" src="02_案件管理項目.png"/>
+</div>
+</div>
+</div>
+</section>
+<section class="why-gas-section">
+<div class="container">
+<div style="max-width: 900px; margin: 0 auto;">
+<h2 class="why-gas-h2">
+  <!-- スマホ調整: 3行に改行されるようにFlex構造を変更 -->
+  <div class="why-gas-line" aria-label="なぜ Googleスプレッドシート × GAS なのか？">
+    <span class="why-gas-pre">なぜ、</span>
+    <span class="gs-gas-highlight">Googleスプレッドシート × GAS</span>
+    <span class="why-gas-post">なのか？</span>
+  </div>
+  <div class="why-gas-sub">
+    SaaS全盛の時代に、<br class="sp-br"/>あえて「原点」を選んだ理由
+  </div>
+</h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:30px; margin-top:50px;">
+<div style="background:rgba(255,255,255,0.05); padding:30px; border-radius:16px; border:1px solid rgba(255,255,255,0.1);">
+<h3 style="color:#60a5fa; font-size:1.3rem; margin-bottom:15px;"><i class="fas fa-bolt"></i> 秒速起動・オフライン対応</h3>
+<p style="font-size:0.95rem; line-height:1.7; opacity:0.9;">
+              重たい管理画面のロードを待つ必要はありません。スマホアプリから1タップで起動。電波の悪いカフェでも、移動中の電車でも、思いついた瞬間にタスクを記録できます。
+            </p>
+</div>
+<div style="background:rgba(255,255,255,0.05); padding:30px; border-radius:16px; border:1px solid rgba(255,255,255,0.1);">
+<h3 style="color:#60a5fa; font-size:1.3rem; margin-bottom:15px;"><i class="fas fa-code"></i> 7,000行の執念のコード</h3>
+<p style="font-size:0.95rem; line-height:1.7; opacity:0.9;">
+              ただの表計算ではありません。裏側では、プログラミング言語(GAS)が24時間稼働しています。自動通知、カレンダー連携、データ整形。まるで「専属の秘書」を雇う感覚です。
+            </p>
+</div>
+<div style="background:rgba(255,255,255,0.05); padding:30px; border-radius:16px; border:1px solid rgba(255,255,255,0.1);">
+<h3 style="color:#60a5fa; font-size:1.3rem; margin-bottom:15px;"><i class="fas fa-infinity"></i> 拡張性は無限大</h3>
+<p style="font-size:0.95rem; line-height:1.7; opacity:0.9;">
+              SaaSの仕様変更に怯える必要はありません。これは「あなたのファイル」です。項目を増やすのも、色を変えるのも、すべて自由。クリエイターの成長に合わせて進化し続けるOSです。
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- スクロールアンカー -->
+<div id="pricing-anchor" style="height: 1px;"></div>
+<section class="comparison" id="pricing">
+<div class="container">
+<!-- スマホ調整: 1行に収まるようにCSSでfont-size調整済み -->
+<h2 class="why-buy-h2" style="text-align:center; margin-bottom:10px; font-size:2rem;">
+        なぜ「買い切り型」なのか？
+      </h2>
+<p style="text-align:center; margin-bottom:50px; color:var(--text-light);">答えは単純です。<br/>あなたの利益を最大化するためです。</p>
+<div class="comp-container">
+<div class="comp-col left">
+<div class="comp-title">一般的な管理サービス</div>
+<div class="comp-price">¥36,000<small>3年間のコスト</small></div>
+<div class="comp-row">
+<span class="comp-label">ランニングコスト</span>
+<span class="comp-val"><i class="fas fa-times-circle icon-cross"></i> 毎月課金</span>
+</div>
+<div class="comp-row">
+<span class="comp-label">カスタマイズ</span>
+<span class="comp-val"><i class="fas fa-times-circle icon-cross"></i> 不可</span>
+</div>
+<div class="comp-row">
+<span class="comp-label">データ所有権</span>
+<span class="comp-val"><i class="fas fa-times-circle icon-cross"></i> 他社依存</span>
+</div>
+</div>
+<div class="comp-col pro">
+<div class="comp-badge">BEST CHOICE</div>
+<div class="pro-header-bg">
+<div class="comp-title main">案件管理シートPro</div>
+</div>
+<div class="comp-price accent">¥<span class="d-price num">5,000</span><small>買い切り・追加¥0</small></div>
+<div class="comp-row">
+<span class="comp-label">ランニングコスト</span>
+<span class="comp-val"><i class="fas fa-check-circle icon-check"></i> <span style="font-weight:bold; color:var(--primary)">完全無料</span></span>
+</div>
+<div class="comp-row">
+<span class="comp-label">カスタマイズ</span>
+<span class="comp-val"><i class="fas fa-check-circle icon-check"></i> 自由自在</span>
+</div>
+<div class="comp-row">
+<span class="comp-label">データ所有権</span>
+<span class="comp-val">
+<i class="fas fa-check-circle icon-check"></i>
+<span style="display:flex; flex-direction:column; line-height:1.2; align-items:center;">
+                完全所有<span style="font-size:0.75rem; font-weight:normal; color:#64748b">(Google Drive)</span>
+</span>
+</span>
+</div>
+</div>
+<div class="comp-col right">
+<div class="comp-title">システム開発</div>
+<div class="comp-price">¥300,000<small>初期開発費</small></div>
+<div class="comp-row">
+<span class="comp-label">ランニングコスト</span>
+<span class="comp-val"><i class="fas fa-exclamation-circle icon-warn"></i> 保守費発生</span>
+</div>
+<div class="comp-row">
+<span class="comp-label">カスタマイズ</span>
+<span class="comp-val"><i class="fas fa-check-circle icon-warn"></i> 可能(有料)</span>
+</div>
+<div class="comp-row">
+<span class="comp-label">データ所有権</span>
+<span class="comp-val"><i class="fas fa-check-circle icon-check" style="color:#22c55e"></i> 自社サーバー</span>
+</div>
+</div>
+</div>
+<div class="comp-mobile">
+<div class="comp-card">
+<h4>一般的な管理サービス (サブスク)</h4>
+<ul class="comp-list">
+<li><span>3年コスト</span><span>¥36,000〜 (高額)</span></li>
+<li><span>自由度</span><span>低い (仕様固定)</span></li>
+<li><span>データ</span><span>他社依存</span></li>
+</ul>
+</div>
+<div class="comp-card pro">
+<h4 style="color:var(--accent); font-weight:900;">案件管理シートPro</h4>
+<div style="text-align:center; margin-bottom:15px;">
+<span style="font-size:2rem; font-weight:900; color:var(--accent); font-family:'Oswald',sans-serif;">¥<span class="d-price num">5,000</span></span>
+<span style="display:block; font-size:0.8rem; color:#64748b;">買い切り・追加費用なし</span>
+</div>
+<ul class="comp-list">
+<li><span>ランニングコスト</span><span style="color:var(--primary); font-weight:900;">¥0 (完全無料)</span></li>
+<li><span>カスタマイズ</span><span style="color:var(--primary); font-weight:900;">自由自在</span></li>
+<li><span>データ所有権</span><span class="comp-right-strong">完全所有 <span class="comp-subnote">(Google Drive)</span></span></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section class="voices">
+<div class="container">
+<h2 style="text-align:center; font-size:2rem; margin-bottom:10px;">トップクリエイターの声</h2>
+<p style="text-align:center; color:var(--text-light);">実際に導入された方々のリアルな感想です</p>
+<div class="voices-grid" id="voices-container">
+<p style="text-align:center; width:100%; color:#94a3b8;">Loading reviews...</p>
+</div>
+</div>
+</section>
+<section style="padding: 100px 0; background: #fff; border-top: 1px solid #e2e8f0;">
+<div class="container">
+<div style="max-width: 800px; margin: 0 auto; text-align: center;">
+<h2 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--primary);">
+          「使いこなせるか不安」<br/>その心配は不要です。
+        </h2>
+<p style="color: var(--text-light); margin-bottom: 50px;">
+          ツールは導入してからが本番です。<br/>
+          あなたの現場に定着するまで<br class="sp-br"/>開発者自らがバックアップします。
+        </p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; text-align: left;">
+<div style="background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+<div style="width: 50px; height: 50px; background: #e0f2fe; color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+<i class="fas fa-video"></i>
+</div>
+<h3 style="font-size: 1.2rem; margin-bottom: 10px; font-weight: bold;">
+              導入・活用マニュアル動画
+            </h3>
+<p style="font-size: 0.95rem; color: var(--text-light); line-height: 1.6;">
+              初期設定から日々の入力方法、応用的な使い方まで、画面を見ながらマネするだけで完了する解説動画をご用意しました。
+              テキストを読むのが面倒な方でも、迷わずスタートできます。
+            </p>
+</div>
+<div style="background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+<div style="width: 50px; height: 50px; background: #e0f2fe; color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px;">
+<i class="fas fa-comments"></i>
+</div>
+<h3 style="font-size: 1.2rem; margin-bottom: 10px; font-weight: bold;">
+              1年間の活用相談サポート
+            </h3>
+<p style="font-size: 0.95rem; color: var(--text-light); line-height: 1.6;">
+              「自社のフローに合わせて項目を変えたい」「GASでこんな連携はできないか？」など、スプレッドシート活用に関する相談を<span style="font-weight:bold; color:var(--cta-main);">1年間無料</span>で受け付けます。
+              開発者の樹央が直接回答します。<br/>
+<br/>
+<span style="font-size:0.85rem; background:#f1f5f9; padding:5px 10px; border-radius:4px; display:inline-block; margin-top:5px;">
+<i class="fas fa-check-circle" style="color:var(--accent);"></i> 期間終了後も、シートの基本的な使い方などの相談は随時無料で受け付けております。
+              </span>
+</p>
+</div>
+</div>
+<div class="note-text">
+<ul>
+<li>サポートは公式LINEにて行います。回数制限はありません。</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section style="padding: 100px 0; background: #f8fafc;">
+<div class="container" style="max-width:800px;">
+<h2 style="text-align:center; font-size:2rem; margin-bottom:50px;">よくある質問</h2>
+<div class="faq-list">
+<div style="margin-bottom:30px; border-bottom:1px solid #e2e8f0; padding-bottom:30px;">
+<h3 style="font-size:1.1rem; margin-bottom:10px; display:flex; gap:10px; align-items:center;">
+<span style="color:#fff; background:var(--primary); padding:2px 10px; border-radius:4px; font-size:0.9rem;">Q</span>
+            PCが苦手ですが、設定できますか？
+          </h3>
+<p style="margin-left:38px; color:var(--text-light); font-size:0.95rem;">
+            はい、可能です。複雑な初期設定はすべて完了した状態でお渡しします。Googleアカウントさえあれば、リンクをクリックしてコピーするだけで即座に利用開始できます。導入マニュアル動画も付属しています。
+          </p>
+</div>
+<div style="margin-bottom:30px; border-bottom:1px solid #e2e8f0; padding-bottom:30px;">
+<h3 style="font-size:1.1rem; margin-bottom:10px; display:flex; gap:10px; align-items:center;">
+<span style="color:#fff; background:var(--primary); padding:2px 10px; border-radius:4px; font-size:0.9rem;">Q</span>
+            Excelでも使えますか？
+          </h3>
+<p style="margin-left:38px; color:var(--text-light); font-size:0.95rem;">
+            いいえ、本システムはGoogleスプレッドシート専用です。Google独自のプログラム（GAS）を使用しているため、Excelでは自動化機能が動作しません。ブラウザ上で無料で使えるGoogleスプレッドシートをご利用ください。
+          </p>
+</div>
+<div style="margin-bottom:30px; border-bottom:1px solid #e2e8f0; padding-bottom:30px;">
+<h3 style="font-size:1.1rem; margin-bottom:10px; display:flex; gap:10px; align-items:center;">
+<span style="color:#fff; background:var(--primary); padding:2px 10px; border-radius:4px; font-size:0.9rem;">Q</span>
+            買い切り後の追加費用は本当にありませんか？
+          </h3>
+<p style="margin-left:38px; color:var(--text-light); font-size:0.95rem;">
+            はい、一切ございません。月額費用、更新料、バージョンアップ費用などはすべて0円です。一度ご購入いただければ、永久にご自身の資産としてお使いいただけます。
+          </p>
+</div>
+<div style="margin-bottom:0;">
+<h3 style="font-size:1.1rem; margin-bottom:10px; display:flex; gap:10px; align-items:center;">
+<span style="color:#fff; background:var(--primary); padding:2px 10px; border-radius:4px; font-size:0.9rem;">Q</span>
+            スマホでも入力できますか？
+          </h3>
+<p style="margin-left:38px; color:var(--text-light); font-size:0.95rem;">
+            はい、可能です。Googleスプレッドシートの公式アプリ（無料）を入れるだけで、スマホからいつでも案件状況の確認や編集が可能です。
+          </p>
+</div>
+</div>
+</div>
+</section>
+<section class="pricing-section" id="final-pricing">
+<div class="container">
+<div class="price-card">
+<div class="stock-alert" id="final-pricing-anchor">現在の価格での提供はあと <span class="d-remaining num">10</span> 名</div>
+<h3 class="price-card-title">迷っている時間が､<br/>一番の「損失」です｡</h3>
+<div class="price-card-message">
+<p>10名購入ごとに価格は､</p>
+<p>自動的に改定されます｡</p>
+<p>今決断した人だけが、<strong>β版初期価格</strong>で手に入れられるタイミングです。</p>
+</div>
+<div class="step-graph-caption">価格推移イメージ（今後の価格例）</div>
+<div class="step-graph" id="step-graph">
+<div class="step-bar active" style="height:40%">
+<div class="step-label">NOW</div>
+            ¥<span class="d-price num">5,000</span>
+</div>
+<div class="step-bar next" style="height:60%">¥<span class="d-next num">6,000</span></div>
+<div class="step-bar future" style="height:80%">...</div>
+<!-- 価格改定表記へ変更 -->
+<div class="step-bar future far" style="height:100%;">改定予定</div>
+</div>
+<div style="margin: 30px 0;">
+<div class="price-notes">
+  <p>※β版は3月末終了予定。状況により終了時期が前倒しになる可能性があります。</p>
+  <!-- 二重価格防止の表現に変更 -->
+  <p>※β版終了後は <strong>価格改定予定</strong> です。<br>（将来的に価格が上がる可能性があります）</p>
+</div>
+<!-- 打ち消し線を削除 -->
+<!-- <div class="price-strike">¥10,000</div> -->
+<span class="price-large-wrap">
+            ¥<span class="d-price num">5,000</span>
+</span>
+<span class="price-large-unit">(税込)</span>
+</div>
+<a class="btn btn-line" href="https://lin.ee/n7CTrqV" id="final-line-cta" rel="noopener" target="_blank"><i class="fa-brands fa-line"></i> 公式LINEで詳細を受け取る</a>
+<!-- アップデート情報 -->
+<div class="update-info" style="margin-top: 30px; text-align: left; background: #eff6ff; padding: 20px; border-radius: 12px; border: 1px solid #dbeafe;">
+<h4 style="color: var(--accent); margin: 0 0 15px; font-size: 1rem; display:flex; align-items:center; gap:8px;">
+<i class="fas fa-gift"></i> 年内大型無料アップデート予定
+            </h4>
+<ul style="font-size: 0.9rem; color: var(--text-main); list-style: none; padding: 0;">
+<li style="margin-bottom: 8px;"><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 8px;"></i> Discord双方向連携 <small style="color: var(--text-light);">(より自動化につながる)</small></li>
+<li style="margin-bottom: 8px;"><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 8px;"></i> Slack双方向連携 <small style="color: var(--text-light);">(より自動化につながる)</small></li>
+<li><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 8px;"></i> Googleカレンダー登録機能</li>
+</ul>
+<p class="update-more" style="font-size: 0.85rem; color: var(--text-main); margin: 12px 0 0; font-weight: 700;"><i class="fas fa-plus-circle" style="color: var(--accent); margin-right: 8px;"></i>他にもアップデート予定あり(随時)</p>
+<p style="font-size: 0.75rem; color: var(--text-light); margin-top: 15px; border-top:1px solid #dbeafe; padding-top:10px;">
+                ※ 開発状況により機能や時期が変更になる可能性があります。<br/>
+                ※ これらの機能追加後も、追加費用は一切かかりません。
+            </p>
+</div>
+<div class="note-text">
+<ul>
+<li>現在はベータ版としての提供です。正式版への移行時に、価格改定が行われる予定です。</li>
+<li>本シートは提携スクールの特典等で配布される可能性があります。重複購入による返金は致しかねますのでご了承ください。</li>
+<li>シーズンイベント等で価格調整を行う場合がありますが、現在のところ開催は未定です。</li>
+<li>購入後、導入ガイドとシートのコピー用リンクが即座に届きます。</li>
+<li>アップデートによる追加費用は一生涯かかりません。</li>
+</ul>
+</div>
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 0.9rem;">
+<a href="https://lin.ee/n7CTrqV" id="corp-line-link" rel="noopener" target="_blank" style="color: var(--text-light); text-decoration:underline;">法人・チームでの一括導入はこちら</a>
+</div>
+
+<!-- ==============================================
+     動画埋め込みエリア
+     ============================================== -->
+<div class="video-embed-container">
+<iframe src="https://drive.google.com/file/d/1-VE7j322LnyD33f7wD6LjalaPzjEfueF/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>
+<!-- クリックしたら消えるように設定 -->
+<div class="video-placeholder" onclick="this.style.opacity='0'; setTimeout(()=>{this.style.display='none'}, 300);">
+<i class="fas fa-play-circle"></i>
+<span>タップして再生</span>
+</div>
+</div>
+<!-- ============================================== -->
+
+</div>
+</div>
+</section>
+<footer>
+<div class="container">
+<div class="footer-nav" style="margin-bottom:20px;">
+<a href="tokusho.html">特定商取引法に基づく表記</a>
+<a href="privacy.html">プライバシーポリシー</a>
+</div>
+<p>© 2026 Nao Yamao / 案件管理シートPro. All Rights Reserved.</p>
+</div>
+</footer>
+<div class="mobile-sticky" id="sticky-footer">
+<a class="btn" href="javascript:void(0)" onclick="scrollToPricing()">
+      LINEで詳細を見る (残り<span class="d-remaining num">10</span>名)
+    </a>
+</div>
+<div class="lightbox-overlay" id="lightbox">
+<div class="lightbox-close">×</div>
+<img class="lightbox-img" id="lightbox-img" src=""/>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, doc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBy8hBH5DNX8GsVvnOfjmyyamc9nIPIR44",
+      authDomain: "manage26-price.firebaseapp.com",
+      projectId: "manage26-price",
+      storageBucket: "manage26-price.firebasestorage.app",
+      messagingSenderId: "405218108343",
+      appId: "1:405218108343:web:3c91b61adac9e9e07ffe32",
+      measurementId: "G-CDWBHCM00C"
+    };
+
+    // 初期値
+    const FALLBACK_DATA = { current_price: 5000, next_price: 6000, remaining: 10, sold_out_history: [] };
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      getAnalytics(app);
+
+      // 1. ステータス同期 (価格・人数)
+      onSnapshot(doc(db, "site_config", "status"), (snap) => {
+        if (snap.exists()) updateStatus(snap.data());
+      }, (error) => {
+        console.warn("Firebase Status Error:", error);
+        updateStatus(FALLBACK_DATA);
+      });
+
+      // 2. 口コミ同期 (Testimonials)
+      const q = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
+      onSnapshot(q, (snap) => {
+        const container = document.getElementById("voices-container");
+        container.innerHTML = "";
+        
+        if(snap.empty) {
+          container.innerHTML = "<p style='text-align:center; width:100%; color:#94a3b8;'>現在、口コミ準備中です。</p>";
+          return;
+        }
+
+        snap.forEach(d => {
+          const data = d.data();
+          
+          // SNSリンク生成
+          let snsLinks = "";
+          if(data.link_x) snsLinks += `<a href="${data.link_x}" target="_blank" class="sns-icon" style="background:#000"><i class="fa-brands fa-x-twitter"></i></a>`;
+          if(data.link_ig) snsLinks += `<a href="${data.link_ig}" target="_blank" class="sns-icon" style="background:linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)"><i class="fa-brands fa-instagram"></i></a>`;
+          if(data.link_yt) snsLinks += `<a href="${data.link_yt}" target="_blank" class="sns-icon" style="background:#FF0000"><i class="fa-brands fa-youtube"></i></a>`;
+          if(data.link_tik) snsLinks += `<a href="${data.link_tik}" target="_blank" class="sns-icon" style="background:#000"><i class="fa-brands fa-tiktok"></i></a>`;
+
+          // 画像
+          const img = data.image_url 
+            ? `<img src="${data.image_url}" class="voice-avt" alt="${data.name}">` 
+            : `<div class="voice-avt" style="display:flex;align-items:center;justify-content:center;color:#fff;background:#cbd5e1;font-size:1.2rem;"><i class="fas fa-user"></i></div>`;
+
+          // カード生成
+          const card = `
+            <div class="voice-card">
+              <div class="voice-head">
+                ${img}
+                <div class="voice-meta">
+                  <h4>${data.name}</h4>
+                  <div class="voice-sns">${snsLinks}</div>
+                </div>
+              </div>
+              <div class="voice-body">${data.content.replace(/\n/g, '<br>')}</div>
+            </div>
+          `;
+          container.insertAdjacentHTML("beforeend", card);
+        });
+      }, (err) => {
+        console.warn("Reviews Error:", err);
+        document.getElementById("voices-container").innerHTML = "<p style='text-align:center; width:100%; color:#94a3b8;'>口コミの読み込みに失敗しました</p>";
+      });
+
+    } catch(e) {
+      console.warn("Firebase Init Error:", e);
+      updateStatus(FALLBACK_DATA);
+    }
+
+    // DOM更新関数
+    function updateStatus(data) {
+      const p = data.current_price.toLocaleString();
+      const n = data.next_price.toLocaleString();
+      
+      document.querySelectorAll(".d-price").forEach(el => el.innerText = p);
+      document.querySelectorAll(".d-next").forEach(el => el.innerText = n);
+      document.querySelectorAll(".d-remaining").forEach(el => el.innerText = data.remaining);
+      
+      const g = document.getElementById("step-graph");
+      if(g) {
+        g.innerHTML = "";
+        if(data.sold_out_history) {
+          data.sold_out_history.forEach(ph => {
+            g.innerHTML += `<div class="step-bar sold">¥${ph.toLocaleString()}</div>`;
+          });
+        }
+        g.innerHTML += `
+          <div class="step-bar active" style="height:60%">
+            <div class="step-label">NOW</div>
+            ¥${p}
+          </div>
+        `;
+        g.innerHTML += `<div class="step-bar next" style="height:80%">¥${n}</div>`;
+        // 二重価格防止の表現に変更
+        g.innerHTML += `<div class="step-bar future far">改定予定</div>`;
+      }
+    }
+
+    // Scroll Sticky
+    window.addEventListener('scroll', () => {
+      const st = document.getElementById('sticky-footer');
+      if(st) st.style.display = (window.scrollY > 400) ? 'block' : 'none';
+    });
+
+    // Lightbox Logic
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    document.querySelectorAll('.browser-mockup img').forEach(img => {
+      img.style.cursor = "zoom-in";
+      img.onclick = () => { lbImg.src = img.src; lb.classList.add('active'); };
+    });
+    document.querySelector('.lightbox-close').onclick = () => lb.classList.remove('active');
+    lb.onclick = (e) => { if(e.target===lb) lb.classList.remove('active'); };
+
+  </script>
+</body>
+</html>
