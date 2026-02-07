@@ -45,6 +45,7 @@
 <body>
 
   <div class="container">
+    <h1 style="text-align:center; margin-bottom:20px; font-size:1.5rem;">Pro管理画面</h1>
     
     <!-- 1. ステータス管理 -->
     <div class="card">
@@ -114,6 +115,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+    // ★追加: 認証モジュール
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBy8hBH5DNX8GsVvnOfjmyyamc9nIPIR44",
@@ -128,30 +131,51 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const storage = getStorage(app);
+    const auth = getAuth(app); // ★追加
 
     let historyData = [];
 
-    // 初期データロード
-    async function loadData() {
-      const snap = await getDoc(doc(db, "site_config", "status"));
-      if (snap.exists()) {
-        const d = snap.data();
-        document.getElementById('current-price').value = d.current_price || "";
-        document.getElementById('next-price').value = d.next_price || "";
-        document.getElementById('remaining').value = d.remaining || "";
-        
-        // 履歴データの正規化と読み込み
-        if (d.sold_out_history) {
-            historyData = d.sold_out_history.map(item => {
-                // 古いデータ(数値のみ)の場合はオブジェクトに変換
-                if (typeof item !== 'object') return { price: item, date: '', title: '限定販売', count: '-' };
-                return item;
-            });
-            renderHistory();
-        }
+    // ★追加: ログイン処理
+    async function initAuth() {
+      try {
+        await signInAnonymously(auth);
+        console.log("Logged in anonymously");
+        // ログイン後にデータをロード
+        loadData();
+      } catch (error) {
+        console.error("Auth Error:", error);
+        alert("認証エラー: FirebaseのAuthentication設定で「匿名ログイン」を有効にしてください。");
       }
     }
-    loadData();
+    
+    // 初期化実行
+    initAuth();
+
+    // データロード関数
+    async function loadData() {
+      try {
+        const snap = await getDoc(doc(db, "site_config", "status"));
+        if (snap.exists()) {
+          const d = snap.data();
+          document.getElementById('current-price').value = d.current_price || "";
+          document.getElementById('next-price').value = d.next_price || "";
+          document.getElementById('remaining').value = d.remaining || "";
+          
+          // 履歴データの正規化と読み込み
+          if (d.sold_out_history) {
+              historyData = d.sold_out_history.map(item => {
+                  // 古いデータ(数値のみ)の場合はオブジェクトに変換
+                  if (typeof item !== 'object') return { price: item, date: '', title: '限定販売', count: '-' };
+                  return item;
+              });
+              renderHistory();
+          }
+        }
+      } catch (e) {
+        console.error("Load Data Error:", e);
+        alert("データの読み込みに失敗しました。権限設定を確認してください。\n" + e.message);
+      }
+    }
 
     // 履歴追加
     window.addHistory = () => {
@@ -197,6 +221,12 @@
 
     // ステータス保存
     window.saveStatus = async () => {
+      // 念のため認証状態チェック
+      if (!auth.currentUser) {
+         alert("認証されていません。ページをリロードしてください。");
+         return;
+      }
+
       try {
         await setDoc(doc(db, "site_config", "status"), {
           current_price: Number(document.getElementById('current-price').value),
@@ -206,12 +236,17 @@
         });
         alert("設定を保存しました！");
       } catch(e) {
-        alert("エラー: " + e.message);
+        alert("エラー: " + e.message + "\n権限がありません。Firebaseのルール設定を確認してください。");
       }
     };
 
     // 口コミ保存
     window.saveReview = async () => {
+        if (!auth.currentUser) {
+           alert("認証されていません。ページをリロードしてください。");
+           return;
+        }
+
         const rName = document.getElementById('r-name').value;
         const rContent = document.getElementById('r-content').value;
         const file = document.getElementById('r-file').files[0];
@@ -219,13 +254,13 @@
 
         if (!rContent) return alert("口コミ内容を入力してください");
 
-        if (file) {
-          const storageRef = ref(storage, 'reviews/' + Date.now() + "_" + file.name);
-          await uploadBytes(storageRef, file);
-          rImg = await getDownloadURL(storageRef);
-        }
-
         try {
+            if (file) {
+              const storageRef = ref(storage, 'reviews/' + Date.now() + "_" + file.name);
+              await uploadBytes(storageRef, file);
+              rImg = await getDownloadURL(storageRef);
+            }
+
             await addDoc(collection(db, "testimonials"), {
               name: rName || "名無しさん",
               image_url: rImg,
@@ -240,7 +275,7 @@
             location.reload();
         } catch(e) {
             console.error(e);
-            alert("エラーが発生しました");
+            alert("エラー: " + e.message);
         }
     };
   </script>
