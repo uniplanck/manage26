@@ -5,87 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pro管理画面</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<!-- Google Icon for Button -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  /* Base UI Adjustments for Mobile */
+  /* Base UI */
   body { font-family: 'Noto Sans JP', sans-serif; padding: 15px; background: #f1f5f9; color: #334155; margin: 0; }
   .container { max-width: 800px; margin: 0 auto; padding-bottom: 80px; }
-  .card { background: #fff; padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+  .card { background: #fff; padding: 30px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
   
-  h2 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+  h2 { margin-top: 0; font-size: 1.2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 25px; color: #0f172a; }
   
-  /* Form Layout */
-  .form-grid { display: grid; gap: 15px; grid-template-columns: 1fr; }
-  .form-group label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 6px; color: #64748b; }
-  .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
-  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; ring: 2px solid rgba(37,99,235,0.1); }
+  /* Login Screen Specific */
+  #login-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; }
+  .login-card { width: 100%; max-width: 400px; text-align: center; }
   
-  /* History Input Area */
-  .history-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .history-inputs input { width: 100%; }
+  .input-group { margin-bottom: 15px; text-align: left; }
+  .input-group label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #64748b; }
+  .input-group input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
   
-  /* Buttons */
-  .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; color: #fff; }
+  .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; color: #fff; margin-bottom: 10px; }
   .btn-primary { background: #2563eb; }
   .btn-primary:hover { background: #1d4ed8; }
-  .btn-add { background: #0f172a; margin-top: 5px; }
-  .btn-remove { background: #ef4444; padding: 6px 12px; font-size: 0.8rem; width: auto; }
+  .btn-google { background: #fff; color: #333; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-google:hover { background: #f8fafc; }
+  .btn-remove { background: #ef4444; padding: 6px 12px; font-size: 0.8rem; width: auto; color: #fff; border-radius: 4px; border: none; cursor: pointer;}
+
+  /* Admin Panel */
+  #admin-panel { display: none; }
+  .form-grid { display: grid; gap: 15px; grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
   
-  /* List Styles */
-  ul { list-style: none; padding: 0; margin: 0; }
+  .history-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
-  .history-info { display: flex; flex-direction: column; gap: 2px; }
-  .history-meta { font-size: 0.8rem; color: #64748b; }
-
-  /* Login Screen */
-  #login-panel {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 80vh; text-align: center;
-  }
-  #admin-panel { display: none; } /* 初期状態は非表示 */
-
-  @media (min-width: 600px) {
-    .form-grid { grid-template-columns: 1fr 1fr; }
-    .history-inputs { grid-template-columns: 2fr 1fr 1fr 1.5fr; }
-  }
 </style>
 </head>
 <body>
 
   <!-- ログイン画面 -->
   <div id="login-panel" class="container">
-    <div class="card" style="width: 100%; max-width: 400px;">
-      <h2>🔒 管理者ログイン</h2>
-      <p style="margin-bottom: 20px; font-size: 0.9rem; color: #64748b;">
-        編集するにはログインが必要です。<br>
-        (現在は簡易認証モードです)
-      </p>
-      <button class="btn btn-primary" onclick="login()">ログインする</button>
+    <div class="card login-card">
+      <h2 style="text-align:center; border:none;">🔒 管理者ログイン</h2>
+      
+      <!-- メール/パスワード -->
+      <div class="input-group">
+        <label>メールアドレス</label>
+        <input type="email" id="login-email" placeholder="admin@example.com">
+      </div>
+      <div class="input-group">
+        <label>パスワード</label>
+        <input type="password" id="login-pass" placeholder="Password">
+      </div>
+      <button class="btn btn-primary" onclick="loginEmail()">ログイン</button>
+      
+      <div style="margin: 20px 0; font-size: 0.8rem; color: #94a3b8;">または</div>
+
+      <!-- Googleログイン -->
+      <button class="btn btn-google" onclick="loginGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
+        Googleでログイン
+      </button>
     </div>
   </div>
 
   <!-- 管理画面 (認証後に表示) -->
   <div id="admin-panel" class="container">
-    <h1 style="text-align:center; margin-bottom:20px; font-size:1.5rem;">Pro管理画面</h1>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h1 style="margin:0; font-size:1.5rem;">Pro管理画面</h1>
+        <button onclick="logout()" class="btn btn-remove" style="width:auto; margin:0;">ログアウト</button>
+    </div>
     
     <!-- 1. ステータス管理 -->
     <div class="card">
       <h2>📊 販売ステータス設定</h2>
       <div class="form-grid">
-        <div class="form-group">
+        <div class="input-group">
           <label>現在の価格 (円)</label>
           <input type="number" id="current-price" placeholder="例: 5000">
         </div>
-        <div class="form-group">
+        <div class="input-group">
           <label>次の価格 (円)</label>
           <input type="number" id="next-price" placeholder="例: 6000">
         </div>
-        <div class="form-group">
+        <div class="input-group">
           <label>残り人数 (名)</label>
           <input type="number" id="remaining" placeholder="例: 10">
         </div>
       </div>
       
-      <div class="form-group" style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 20px;">
+      <div class="input-group" style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 20px;">
         <label>🏁 完売履歴の追加 (階段グラフ & 履歴リスト用)</label>
         <div class="history-inputs">
             <input type="text" id="hist-title" placeholder="タイトル (例: β版)">
@@ -93,7 +100,7 @@
             <input type="number" id="hist-price" placeholder="価格 (例: 5000)">
             <input type="text" id="hist-date" placeholder="日時 (例: 2026/02/01)">
         </div>
-        <button class="btn btn-add" onclick="addHistory()">履歴リストに追加</button>
+        <button class="btn" style="background:#0f172a;" onclick="addHistory()">履歴リストに追加</button>
         
         <ul id="history-list" style="margin-top: 15px;"></ul>
       </div>
@@ -104,20 +111,20 @@
     <!-- 2. 口コミ管理 -->
     <div class="card">
       <h2>💬 口コミ管理</h2>
-      <div class="form-group">
+      <div class="input-group">
         <label>名前 (任意)</label>
         <input type="text" id="r-name" placeholder="@username">
       </div>
-      <div class="form-group" style="margin-top:10px;">
+      <div class="input-group">
         <label>画像URL (任意)</label>
         <input type="text" id="r-img" placeholder="https://...">
         <input type="file" id="r-file" accept="image/*" style="margin-top:5px;">
       </div>
-      <div class="form-group" style="margin-top:10px;">
+      <div class="input-group">
         <label>内容</label>
-        <textarea id="r-content" rows="4" placeholder="口コミ内容..."></textarea>
+        <textarea id="r-content" rows="4" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; font-size:1rem;" placeholder="口コミ内容..."></textarea>
       </div>
-      <div class="form-group" style="margin-top:10px;">
+      <div class="input-group">
         <label>SNSリンク (任意)</label>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
           <input type="text" id="r-x" placeholder="X (Twitter) URL">
@@ -129,17 +136,20 @@
       <button class="btn btn-primary" onclick="saveReview()" style="margin-top: 20px;">口コミを追加</button>
     </div>
 
-    <div style="text-align:center; margin-top:20px;">
-        <button onclick="logout()" class="btn btn-remove" style="background:#64748b;">ログアウト</button>
-    </div>
-
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { 
+        getAuth, 
+        signInWithEmailAndPassword, 
+        signInWithPopup, 
+        GoogleAuthProvider, 
+        onAuthStateChanged, 
+        signOut 
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBy8hBH5DNX8GsVvnOfjmyyamc9nIPIR44",
@@ -155,44 +165,55 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
     const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
     let historyData = [];
 
-    // 認証状態の監視 (これがガードの役割)
+    // 認証状態の監視
     onAuthStateChanged(auth, (user) => {
         const loginPanel = document.getElementById('login-panel');
         const adminPanel = document.getElementById('admin-panel');
 
         if (user) {
-            // ログイン済み
-            console.log("User logged in:", user.uid);
+            console.log("Logged in:", user.email || user.uid);
             loginPanel.style.display = 'none';
             adminPanel.style.display = 'block';
-            loadData(); // データ読み込み開始
+            loadData();
         } else {
-            // 未ログイン
-            console.log("No user logged in");
+            console.log("Logged out");
             loginPanel.style.display = 'flex';
             adminPanel.style.display = 'none';
         }
     });
 
-    // ログイン処理
-    window.login = async () => {
-      try {
-        await signInAnonymously(auth);
-      } catch (error) {
-        console.error("Auth Error:", error);
-        alert("認証エラー: Firebaseコンソールで[Authentication] > [Sign-in method] > [Anonymous] を有効にしてください。");
-      }
-    }
+    // Emailログイン
+    window.loginEmail = async () => {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-pass').value;
+        if(!email || !pass) return alert("メールアドレスとパスワードを入力してください");
+        
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+        } catch (error) {
+            console.error(error);
+            alert("ログイン失敗: " + error.message);
+        }
+    };
 
-    // ログアウト処理
-    window.logout = () => {
-        signOut(auth);
-    }
+    // Googleログイン
+    window.loginGoogle = async () => {
+        try {
+            await signInWithPopup(auth, googleProvider);
+        } catch (error) {
+            console.error(error);
+            alert("Googleログイン失敗: " + error.message);
+        }
+    };
 
-    // データロード関数
+    // ログアウト
+    window.logout = () => signOut(auth);
+
+    // データロード
     async function loadData() {
       try {
         const snap = await getDoc(doc(db, "site_config", "status"));
@@ -212,7 +233,6 @@
         }
       } catch (e) {
         console.error("Load Data Error:", e);
-        // 権限エラーなどはここでキャッチ
       }
     }
 
@@ -226,31 +246,29 @@
         if(!price) return alert("価格は必須です");
         
         historyData.push({ title, count, price, date });
+        renderHistory();
         
         // フォームクリア
         document.getElementById('hist-title').value = '';
         document.getElementById('hist-count').value = '';
         document.getElementById('hist-price').value = '';
         document.getElementById('hist-date').value = '';
-        renderHistory();
     };
 
-    // 履歴削除
     window.removeHistory = (index) => {
         historyData.splice(index, 1);
         renderHistory();
     };
 
-    // 履歴描画
     function renderHistory() {
         const list = document.getElementById('history-list');
         list.innerHTML = "";
         historyData.forEach((item, index) => {
             list.innerHTML += `
                 <li class="history-item">
-                    <div class="history-info">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
                         <strong>${item.title} (${item.count})</strong>
-                        <span class="history-meta">¥${item.price.toLocaleString()} | ${item.date}</span>
+                        <span style="font-size:0.8rem; color:#64748b;">¥${item.price.toLocaleString()} | ${item.date}</span>
                     </div>
                     <button class="btn-remove" onclick="removeHistory(${index})">削除</button>
                 </li>
@@ -258,9 +276,9 @@
         });
     }
 
-    // ステータス保存
+    // 保存処理 (要認証)
     window.saveStatus = async () => {
-      if (!auth.currentUser) return alert("ログインしてください");
+      if (!auth.currentUser) return alert("セッションが切れました。再ログインしてください");
 
       try {
         await setDoc(doc(db, "site_config", "status"), {
@@ -271,11 +289,10 @@
         });
         alert("設定を保存しました！");
       } catch(e) {
-        alert("エラー: " + e.message + "\n権限設定(Rules)を確認してください。");
+        alert("保存エラー: " + e.message + "\n権限がない可能性があります");
       }
     };
 
-    // 口コミ保存
     window.saveReview = async () => {
         if (!auth.currentUser) return alert("ログインしてください");
 
@@ -306,7 +323,6 @@
             alert("口コミを追加しました！");
             location.reload();
         } catch(e) {
-            console.error(e);
             alert("エラー: " + e.message);
         }
     };
