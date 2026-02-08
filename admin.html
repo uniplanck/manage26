@@ -27,9 +27,14 @@
   .btn-primary:hover { background: #1d4ed8; }
   .btn-google { background: #fff; color: #333; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn-google:hover { background: #f8fafc; }
+  
   .btn-remove { background: #ef4444; padding: 6px 12px; font-size: 0.8rem; width: auto; color: #fff; border-radius: 4px; }
   .btn-edit { background: #0f172a; padding: 6px 12px; font-size: 0.8rem; width: auto; color: #fff; border-radius: 4px; }
   .btn-cancel { background: #64748b; padding: 6px 12px; font-size: 0.8rem; width: auto; color: #fff; border-radius: 4px; }
+  
+  /* Sort Buttons */
+  .btn-sort { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; }
+  .btn-sort:hover { background: #e2e8f0; color: #0f172a; }
 
   #admin-panel { display: none; }
   .form-grid { display: grid; gap: 15px; grid-template-columns: 1fr; }
@@ -42,12 +47,15 @@
   .review-list { list-style: none; padding: 0; margin-top: 20px; }
   .review-item { 
     background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 10px; 
-    display: flex; gap: 15px; align-items: start;
+    display: flex; gap: 15px; align-items: center; transition: background 0.2s;
   }
+  .review-item:hover { background: #f1f5f9; }
   .review-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #cbd5e1; flex-shrink: 0; }
   .review-content { flex: 1; min-width: 0; }
   .review-name { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; display: block; }
   .review-text { font-size: 0.85rem; color: #475569; white-space: pre-wrap; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 5px; }
+  
+  .review-controls { display: flex; flex-direction: column; gap: 4px; margin-right: 10px; }
   .review-actions { display: flex; flex-direction: column; gap: 5px; min-width: 60px; }
 </style>
 </head>
@@ -150,7 +158,14 @@
           </div>
       </div>
 
-      <h3>登録済み口コミ一覧</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>登録済み口コミ一覧</h3>
+          <button class="btn" onclick="saveOrder()" style="width:auto; padding:8px 16px; font-size:0.9rem; background:#059669;">
+            <i class="fas fa-save"></i> 並び順を保存する
+          </button>
+      </div>
+      <p style="font-size:0.8rem; color:#64748b; margin-top:-10px; margin-bottom:15px;">※ 矢印で順番を入れ替えたら、必ず「並び順を保存する」を押してください。</p>
+
       <ul id="review-list" class="review-list">
           <li style="text-align:center; color:#94a3b8; padding:20px;">読み込み中...</li>
       </ul>
@@ -159,7 +174,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, query, orderBy, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, writeBatch, collection, query, orderBy, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
     import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
@@ -180,6 +195,7 @@
     const googleProvider = new GoogleAuthProvider();
 
     let historyData = [];
+    let allReviews = []; // 口コミデータを保持する配列
     let editingReviewId = null;
 
     onAuthStateChanged(auth, (user) => {
@@ -226,59 +242,99 @@
       } catch (e) { console.error("Load Data Error:", e); }
     }
 
-    // 口コミ一覧ロード (クライアント側ソートで全件表示)
+    // 口コミロード (全件取得してJSでソート)
     function loadReviews() {
-        // orderByを外して全件取得し、JSでソートする（createdAtがない古いデータも表示するため）
         onSnapshot(collection(db, "testimonials"), (snapshot) => {
-            const list = document.getElementById('review-list');
-            list.innerHTML = "";
-            
-            if(snapshot.empty) {
-                list.innerHTML = "<li style='text-align:center; padding:20px; color:#94a3b8;'>まだ口コミがありません</li>";
-                return;
-            }
+            allReviews = [];
+            snapshot.forEach(doc => {
+                allReviews.push({ id: doc.id, ...doc.data() });
+            });
 
-            // データを配列化してソート
-            let docs = [];
-            snapshot.forEach(d => docs.push({ id: d.id, ...d.data() }));
-            
-            // 作成日順（新しい順）にソート。作成日がない場合は最後に。
-            docs.sort((a, b) => {
+            // ソート: order (昇順) -> createdAt (降順)
+            allReviews.sort((a, b) => {
+                if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
+                if (a.order !== undefined) return -1; // orderがある方を優先
+                if (b.order !== undefined) return 1;
+                // orderがない場合は日付順
                 const ta = a.createdAt ? a.createdAt.seconds : 0;
                 const tb = b.createdAt ? b.createdAt.seconds : 0;
                 return tb - ta;
             });
 
-            docs.forEach((data) => {
-                const safeName = (data.name || "名無し").replace(/</g, "&lt;");
-                const safeContent = (data.content || "").replace(/</g, "&lt;");
-                const imgUrl = data.image_url || "";
-                
-                // データオブジェクトをJSON文字列化（シングルクォートをエスケープ）
-                const jsonStr = JSON.stringify(data).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-
-                const item = document.createElement('li');
-                item.className = 'review-item';
-                item.innerHTML = `
-                    <img src="${imgUrl}" class="review-img" onerror="this.style.display='none'">
-                    <div class="review-content">
-                        <span class="review-name">${safeName}</span>
-                        <div class="review-text">${safeContent}</div>
-                    </div>
-                    <div class="review-actions">
-                        <button class="btn-edit" onclick='editReview("${data.id}", ${jsonStr})'>編集</button>
-                        <button class="btn-remove" onclick='deleteReview("${data.id}")'>削除</button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }, (error) => {
-            console.error("Reviews Error:", error);
-            document.getElementById('review-list').innerHTML = "<li style='color:red;'>読み込みエラー: " + error.message + "</li>";
+            renderReviewList();
         });
     }
 
-    // グローバルスコープに関数を登録
+    // 口コミリスト描画
+    function renderReviewList() {
+        const list = document.getElementById('review-list');
+        list.innerHTML = "";
+        
+        if (allReviews.length === 0) {
+            list.innerHTML = "<li style='text-align:center; padding:20px; color:#94a3b8;'>まだ口コミがありません</li>";
+            return;
+        }
+
+        allReviews.forEach((data, index) => {
+            const safeName = (data.name || "名無し").replace(/</g, "&lt;");
+            const safeContent = (data.content || "").replace(/</g, "&lt;");
+            const imgUrl = data.image_url || "";
+            const jsonStr = JSON.stringify(data).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+
+            const item = document.createElement('li');
+            item.className = 'review-item';
+            item.innerHTML = `
+                <div class="review-controls">
+                    <button class="btn-sort" onclick="moveReview(${index}, -1)">▲</button>
+                    <button class="btn-sort" onclick="moveReview(${index}, 1)">▼</button>
+                </div>
+                <img src="${imgUrl}" class="review-img" onerror="this.style.display='none'">
+                <div class="review-content">
+                    <span class="review-name">${safeName} <span style="font-size:0.7rem; color:#94a3b8;">(順序: ${data.order ?? '-'})</span></span>
+                    <div class="review-text">${safeContent}</div>
+                </div>
+                <div class="review-actions">
+                    <button class="btn-edit" onclick='editReview("${data.id}", ${jsonStr})'>編集</button>
+                    <button class="btn-remove" onclick='deleteReview("${data.id}")'>削除</button>
+                </div>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    // 並び替え処理
+    window.moveReview = (index, direction) => {
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= allReviews.length) return;
+        
+        // 配列を入れ替え
+        [allReviews[index], allReviews[newIndex]] = [allReviews[newIndex], allReviews[index]];
+        
+        // 再描画
+        renderReviewList();
+    };
+
+    // 並び順の一括保存
+    window.saveOrder = async () => {
+        if (!auth.currentUser) return alert("ログインしてください");
+        if (allReviews.length === 0) return;
+        
+        const batch = writeBatch(db);
+        allReviews.forEach((review, index) => {
+            const ref = doc(db, "testimonials", review.id);
+            batch.update(ref, { order: index });
+        });
+        
+        try {
+            await batch.commit();
+            alert("並び順を保存しました！");
+        } catch(e) {
+            console.error(e);
+            alert("保存エラー: " + e.message);
+        }
+    };
+
+    // 編集・フォームリセット・保存・削除（前回同様）
     window.editReview = (id, data) => {
         editingReviewId = id;
         document.getElementById('review-form-title').innerText = "口コミを編集";
@@ -343,9 +399,10 @@
               link_tik: document.getElementById('r-tik').value,
             };
             
-            // 新規作成時のみタイムスタンプ追加
             if (!editingReviewId) {
                 docData.createdAt = serverTimestamp();
+                // 新規作成時は最後尾に追加（現在の最大order + 1）
+                docData.order = allReviews.length; 
             }
 
             if (editingReviewId) {

@@ -146,7 +146,6 @@
     transition: transform 0.2s, box-shadow 0.2s;
     white-space: nowrap; 
     letter-spacing: 0.05em;
-    text-decoration: none; /* Aタグ用 */
   }
   .btn::before {
     content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -366,6 +365,15 @@
   .sns-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #fff; font-size: 0.8rem; transition: opacity 0.2s; }
   .sns-icon:hover { opacity: 0.8; }
   .voice-body { font-size: 0.95rem; color: var(--text-main); line-height: 1.6; }
+  /* もっと見るボタン */
+  .more-voices-btn-container { text-align: center; margin-top: 30px; }
+  .more-voices-btn {
+      background: #fff; border: 1px solid #cbd5e1; color: #64748b; padding: 12px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s;
+      display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem;
+  }
+  .more-voices-btn:hover { background: #f1f5f9; color: var(--primary); border-color: var(--primary); transform: translateY(-2px); }
+  .hidden-area { display: none; opacity: 0; transition: opacity 0.5s ease; }
+  .hidden-area.visible { display: grid; opacity: 1; }
 
   /* FAQ */
   .faq-section { padding: 80px 0; background: #fff; }
@@ -442,7 +450,7 @@
   .roadmap li { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .roadmap li i { color: var(--accent); }
 
-  /* Step Graph */
+  /* Step Graph Container (Flexbox Row - Simple) */
   .step-graph { 
     display: flex; 
     align-items: flex-end; 
@@ -1052,8 +1060,19 @@
     <div class="container">
       <h2 style="text-align:center;">トップクリエイターの声</h2>
       <p style="text-align:center; color:var(--text-light);">実際に導入された方々のリアルな感想です</p>
-      <div id="voices-container" class="voices-grid">
+      
+      <div id="voices-list-primary" class="voices-grid">
         <p style="text-align:center; width:100%; color:#94a3b8;">Loading reviews...</p>
+      </div>
+
+      <div id="voices-list-secondary" class="voices-grid hidden-area" style="margin-top:30px; display:none;">
+        <!-- More reviews will be loaded here -->
+      </div>
+      
+      <div id="more-voices-container" class="more-voices-btn-container" style="display:none;">
+        <button class="more-voices-btn" onclick="toggleMoreVoices()">
+          <i class="fas fa-chevron-down"></i> もっと見る
+        </button>
       </div>
     </div>
   </section>
@@ -1158,7 +1177,10 @@
           <div style="font-size:0.75rem; color:#ef4444; font-weight:normal; margin-top:3px;">※それ以降はずっと無料</div>
         </div>
 
-        <div class="step-graph" id="step-graph"></div>
+        <!-- 階段グラフコンテナ -->
+        <div class="step-graph" id="step-graph">
+           <!-- JSで中身生成 -->
+        </div>
         
         <!-- 履歴表示エリア -->
         <div class="history-section" id="history-section-wrapper" style="display:none;">
@@ -1339,19 +1361,37 @@
         if (snap.exists()) updateStatus(snap.data());
       }, (e) => updateStatus(FALLBACK_DATA));
 
-      // Reviews Sync
+      // Reviews Sync with Sort and Toggle
       const q = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
       onSnapshot(q, (snap) => {
-        const container = document.getElementById("voices-container");
-        container.innerHTML = "";
+        const listPrimary = document.getElementById('voices-list-primary');
+        const listSecondary = document.getElementById('voices-list-secondary');
+        const moreContainer = document.getElementById('more-voices-container');
+
+        // Reset
+        listPrimary.innerHTML = "";
+        listSecondary.innerHTML = "";
+        moreContainer.style.display = "none";
         
         if(snap.empty) {
-          container.innerHTML = "<p style='text-align:center; width:100%; color:#94a3b8;'>現在、口コミ準備中です。</p>";
+          listPrimary.innerHTML = "<p style='text-align:center; width:100%; color:#94a3b8;'>現在、口コミ準備中です。</p>";
           return;
         }
 
-        snap.forEach(d => {
-          const data = d.data();
+        let allReviews = [];
+        snap.forEach(d => allReviews.push({ id: d.id, ...d.data() }));
+
+        // Sort by order (ascending), then by date
+        allReviews.sort((a, b) => {
+            if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
+            if (a.order !== undefined) return -1;
+            if (b.order !== undefined) return 1;
+            const ta = a.createdAt ? a.createdAt.seconds : 0;
+            const tb = b.createdAt ? b.createdAt.seconds : 0;
+            return tb - ta;
+        });
+
+        allReviews.forEach((data, index) => {
           let snsLinks = "";
           if(data.link_x) snsLinks += `<a href="${data.link_x}" target="_blank" class="sns-icon" style="background:#000"><i class="fa-brands fa-x-twitter"></i></a>`;
           if(data.link_ig) snsLinks += `<a href="${data.link_ig}" target="_blank" class="sns-icon" style="background:linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)"><i class="fa-brands fa-instagram"></i></a>`;
@@ -1374,11 +1414,21 @@
               <div class="voice-body">${data.content.replace(/\n/g, '<br>')}</div>
             </div>
           `;
-          container.insertAdjacentHTML("beforeend", card);
+          
+          if(index < 3) {
+              listPrimary.insertAdjacentHTML("beforeend", card);
+          } else {
+              listSecondary.insertAdjacentHTML("beforeend", card);
+          }
         });
+
+        // Show "More" button if there are more than 3 reviews
+        if(allReviews.length > 3) {
+            moreContainer.style.display = "block";
+        }
+
       }, (err) => {
-        // console.warn("Reviews Error:", err); // Suppress error
-        document.getElementById("voices-container").innerHTML = "<p style='text-align:center; width:100%; color:#94a3b8;'>口コミの読み込みに失敗しました</p>";
+        document.getElementById("voices-list-primary").innerHTML = "<p style='text-align:center; width:100%; color:#94a3b8;'>口コミの読み込みに失敗しました</p>";
       });
 
     } catch(e) {
@@ -1503,6 +1553,21 @@
         list.style.display = 'none';
         btn.classList.remove('open');
       }
+    };
+
+    // Toggle More Voices
+    window.toggleMoreVoices = () => {
+        const secondaryList = document.getElementById('voices-list-secondary');
+        const btnContainer = document.getElementById('more-voices-container');
+        
+        if (secondaryList.style.display === 'none') {
+            secondaryList.style.display = 'grid'; // Gridに戻す
+            // 少し遅らせてopacityを1にする (フェードイン)
+            setTimeout(() => {
+                secondaryList.classList.add('visible');
+            }, 10);
+            btnContainer.style.display = 'none'; // ボタンを消す
+        }
     };
     
     // Smooth Scroll Helper (修正: #final-pricing へスクロール)
