@@ -441,13 +441,12 @@
   .roadmap li { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .roadmap li i { color: var(--accent); }
 
-  /* Step Graph (New Logic) */
-  /* align-items: flex-end で底辺揃えにする */
+  /* Step Graph Container (Flexbox Row - Simple) */
   .step-graph { 
     display: flex; 
     align-items: flex-end; 
     justify-content: center; 
-    gap: 5px; /* 要素間の隙間 */
+    gap: 3px; /* 隙間 */
     height: 140px; 
     margin: 40px auto; 
     max-width: 550px; 
@@ -456,7 +455,7 @@
     position: relative; 
   }
   
-  /* 階段バー */
+  /* 階段バー (Flex Item) */
   .step-bar { 
     flex: 1; /* 均等幅 */
     background: #e2e8f0; 
@@ -474,33 +473,15 @@
   }
 
   .step-bar.active { 
-    background: linear-gradient(to top, var(--cta-main), #fbbf24);
+    background: var(--cta-main); 
     color: #fff; 
-    box-shadow: 0 5px 20px rgba(249, 115, 22, 0.4); 
+    box-shadow: 0 0 20px var(--cta-shadow); 
     z-index: 2; 
     transform: scale(1.05); 
     transform-origin: bottom center;
-    border: none;
   }
-  /* 過去：売り切れ感演出（斜線パターン） */
-  .step-bar.sold { 
-    background: repeating-linear-gradient(
-      45deg,
-      #cbd5e1,
-      #cbd5e1 5px,
-      #e2e8f0 5px,
-      #e2e8f0 10px
-    );
-    color: #94a3b8;
-    text-decoration: line-through;
-    opacity: 0.8;
-  }
-  .step-bar.future { 
-    background: #fff; 
-    color: #94a3b8; 
-    border: 2px dashed #cbd5e1; 
-    box-sizing: border-box; 
-  }
+  .step-bar.sold { background: #cbd5e1; opacity: 0.7; }
+  .step-bar.future { background: #f1f5f9; color: #94a3b8; border: 1px dashed #cbd5e1; box-sizing: border-box; }
   
   .step-date { 
     position: absolute; top: -24px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.6rem; color: #94a3b8; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
@@ -515,7 +496,7 @@
 
   /* NOWラベル */
   .step-label { 
-    position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.9rem; font-weight: 900; color: var(--cta-main); 
+    position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.8rem; font-weight: 900; color: var(--cta-main); 
   }
   
   .step-bar.no-text { font-size: 0; padding-bottom: 0; }
@@ -1445,6 +1426,7 @@
         // 階段計算ロジック
         const minH = 30;
         const maxH = 100;
+        // totalItems - 1 で割ることで最後の要素を100%にする
         const stepH = (maxH - minH) / (totalItems > 1 ? totalItems - 1 : 1);
 
         // 描画ループ
@@ -1527,24 +1509,62 @@
       }
     };
     
-    // Smooth Scroll Helper
+    // Smooth Scroll Helper (修正: #final-pricing へスクロール)
     window.scrollToPricing = () => {
-      const el = document.getElementById('pricing-anchor') || document.getElementById('final-pricing');
+      const el = document.getElementById('final-pricing'); // IDを直接指定
       if (!el) return;
       const y = el.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
     
-    // Sticky Footer Logic (Appear when hero button is gone)
+    // Sticky Footer Logic (修正: 価格セクションが見えたら消える)
     const heroBtn = document.getElementById('hero-cta');
+    const pricingSec = document.getElementById('final-pricing');
     const stickyFooter = document.getElementById('sticky-footer');
-    if (heroBtn && stickyFooter) {
-      const obs = new IntersectionObserver((entries) => {
+    
+    if (heroBtn && stickyFooter && pricingSec) {
+      // 1. ヒーローボタンの監視
+      const heroObs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          stickyFooter.style.display = !entry.isIntersecting ? 'block' : 'none';
+            // ヒーローボタンが見えなくなったらフッターを表示候補にする
+            if (!entry.isIntersecting) {
+                stickyFooter.dataset.heroHidden = "true";
+            } else {
+                stickyFooter.dataset.heroHidden = "false";
+            }
+            updateStickyFooter();
         });
       });
-      obs.observe(heroBtn);
+      heroObs.observe(heroBtn);
+      
+      // 2. 価格セクションの監視
+      const pricingObs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              // 価格セクションが見えている間はフッターを隠す
+              if (entry.isIntersecting) {
+                  stickyFooter.dataset.pricingVisible = "true";
+              } else {
+                  stickyFooter.dataset.pricingVisible = "false";
+              }
+              updateStickyFooter();
+          });
+      }, { threshold: 0.1 }); // 10%見えたら反応
+      pricingObs.observe(pricingSec);
+      
+      function updateStickyFooter() {
+          const isHeroHidden = stickyFooter.dataset.heroHidden === "true";
+          const isPricingVisible = stickyFooter.dataset.pricingVisible === "true";
+          
+          if (isHeroHidden && !isPricingVisible) {
+              stickyFooter.style.display = 'block';
+              setTimeout(() => stickyFooter.classList.remove('hidden'), 10);
+          } else {
+              stickyFooter.classList.add('hidden');
+              setTimeout(() => {
+                  if(stickyFooter.classList.contains('hidden')) stickyFooter.style.display = 'none';
+              }, 300); // アニメーション待機
+          }
+      }
     }
     
     // Lightbox
