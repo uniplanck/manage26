@@ -146,6 +146,7 @@
     transition: transform 0.2s, box-shadow 0.2s;
     white-space: nowrap; 
     letter-spacing: 0.05em;
+    text-decoration: none; /* Aタグ用 */
   }
   .btn::before {
     content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -441,12 +442,12 @@
   .roadmap li { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .roadmap li i { color: var(--accent); }
 
-  /* Step Graph Container (Flexbox Row - Simple) */
+  /* Step Graph */
   .step-graph { 
     display: flex; 
     align-items: flex-end; 
     justify-content: center; 
-    gap: 3px; /* 隙間 */
+    gap: 4px; /* 隙間 */
     height: 140px; 
     margin: 40px auto; 
     max-width: 550px; 
@@ -499,8 +500,8 @@
     position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.8rem; font-weight: 900; color: var(--cta-main); 
   }
   
+  /* 価格テキストなしクラス */
   .step-bar.no-text { font-size: 0; padding-bottom: 0; }
-
 
   /* History Section */
   .history-section { margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 15px; display: none; /* JSで表示制御 */ }
@@ -1170,10 +1171,10 @@
           </ul>
         </div>
 
-        <!-- LINE Color Button -->
-        <button onclick="window.open(CONFIG_DEFAULTS.links.checkout, '_blank')" class="btn btn-line-color" style="margin-top: 20px;">
+        <!-- LINE Color Button (Link Fixed) -->
+        <a href="https://lin.ee/H1Ibs6S" target="_blank" rel="noopener" class="btn btn-line-color" style="margin-top: 20px; text-decoration: none;">
           <i class="fa-brands fa-line"></i> 公式LINEで詳細を受け取る
-        </button>
+        </a>
         
         <!-- LINE追加時の注意書き -->
         <div style="max-width: 480px; margin: 15px auto 0;">
@@ -1298,11 +1299,6 @@
 
     const FALLBACK_DATA = { current_price: 5000, next_price: 6000, remaining: 10, sold_out_history: [] };
     
-    // LINEリンク設定
-    const CONFIG_DEFAULTS = {
-      links: { checkout: "https://lin.ee/n7CTrqV" }
-    };
-
     try {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
@@ -1423,7 +1419,7 @@
         const allItems = [...history, { type: 'current', price: p }, { type: 'next', price: n }, { type: 'future' }];
         const totalItems = allItems.length;
         
-        // 階段計算ロジック
+        // 階段計算ロジック (30% -> 100% へ均等割り)
         const minH = 30;
         const maxH = 100;
         // totalItems - 1 で割ることで最後の要素を100%にする
@@ -1483,7 +1479,7 @@
              priceText = "改定予定";
            }
 
-           // バー要素の生成
+           // バー要素の生成 (矢印なし)
            g.innerHTML += `
              <div class="step-bar ${barClass}" style="height: ${h}%">
                ${label}
