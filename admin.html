@@ -454,8 +454,10 @@
             list.innerHTML += `
                 <li class="history-item">
                     <div style="display:flex; flex-direction:column; gap:2px;">
-                        <strong>${item.title} (${item.count})</strong>
-                        <span style="font-size:0.8rem; color:#64748b;">¥${item.price.toLocaleString()} | ${item.date}</span>
+                        <strong>${item.title}</strong>
+                        <span style="font-size:0.8rem; color:#64748b;">
+                          ${item.count ? item.count + ' | ' : ''}¥${item.price.toLocaleString()} | ${item.date}
+                        </span>
                     </div>
                     <button class="btn-remove" onclick="removeHistory(${index})">削除</button>
                 </li>
