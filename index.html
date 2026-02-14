@@ -450,23 +450,53 @@
   .roadmap li { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .roadmap li i { color: var(--accent); }
 
-  /* Step Graph Container (Flexbox Row - Simple) */
+  /* =========================================
+     Step Graph (完全センター配置・等幅・シンメトリー版)
+     ========================================= */
   .step-graph { 
     display: flex; 
     align-items: flex-end; 
     justify-content: center; 
-    gap: 4px; /* 隙間 */
-    height: 140px; 
-    margin: 40px auto; 
-    max-width: 550px; 
     width: 100%; 
+    max-width: 800px;
+    height: 160px; 
+    margin: 40px auto; 
     padding-top: 30px; 
     position: relative; 
   }
+
+  /* 3つのエリアに分割 */
+  .step-group-left, .step-group-right {
+    flex: 3; /* 左右等幅でスペースを確保 (3つ分) */
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    gap: 4px;
+    min-width: 0; /* Flexboxの縮小対策 */
+  }
+  .step-group-left {
+    justify-content: flex-end; /* 右（中央）寄せ */
+    padding-right: 4px;
+  }
+  .step-group-right {
+    justify-content: flex-start; /* 左（中央）寄せ */
+    padding-left: 4px;
+  }
   
-  /* 階段バー (Flex Item) */
+  /* 中央エリア (1つ分) */
+  .step-center {
+    flex: 1; 
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  /* 階段バー (すべて等幅) */
   .step-bar { 
-    flex: 1; /* 均等幅 */
+    flex: 1; 
+    width: 100%; /* 親コンテナ内で等分 */
     background: #e2e8f0; 
     border-radius: 6px 6px 0 0; 
     position: relative; 
@@ -479,6 +509,7 @@
     font-weight: bold; 
     white-space: nowrap; 
     transition: 0.3s; 
+    min-width: 10px; 
   }
 
   .step-bar.active { 
@@ -488,10 +519,26 @@
     z-index: 2; 
     transform: scale(1.05); 
     transform-origin: bottom center;
+    /* 幅は他と同じ */
   }
-  .step-bar.sold { background: #cbd5e1; opacity: 0.7; }
+
+  .step-bar.sold { background: #cbd5e1; opacity: 0.9; }
+  
+  .step-bar.omitted { 
+      opacity: 0.5; 
+      background: #e2e8f0;
+  }
+  
   .step-bar.future { background: #f1f5f9; color: #94a3b8; border: 1px dashed #cbd5e1; box-sizing: border-box; }
   
+  /* ダミーバー（不可視・レイアウト維持用） */
+  .step-bar.dummy {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      pointer-events: none;
+  }
+
   .step-date { 
     position: absolute; top: -24px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.6rem; color: #94a3b8; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
   }
@@ -730,6 +777,10 @@
     .message-section { padding: 30px 20px; margin-top: 40px; margin-bottom: 40px; }
     .msg-icon { top: -25px; width: 50px; height: 50px; }
     .msg-sign { bottom: 20px; right: 20px; font-size: 2rem; }
+
+    /* ★階段グラフ スマホ最適化★ */
+    .step-date { display: none; } /* スマホでは日時は非表示 */
+    .step-bar { font-size: 0.7rem; } /* 文字少し小さく */
   }
 </style>
 </head>
@@ -762,10 +813,6 @@
           <i class="fa-brands fa-line"></i> 公式LINEで詳細を受け取る
         </button>
         <div style="font-size:0.8rem; color:#94a3b8; margin-top:10px;">※ 無理な売り込みは一切ありません</div>
-      </div>
-
-      <div style="font-size:0.85rem; color:#94a3b8; margin-top:15px; font-weight:bold; text-align:center;">
-        ※ 現在 <span class="d-remaining skeleton" style="color:var(--cta-main); font-size:1.1rem;">--</span> 名限定の特別価格で案内中
       </div>
 
       <div class="hero-visual">
@@ -1177,9 +1224,11 @@
           <div style="font-size:0.75rem; color:#ef4444; font-weight:normal; margin-top:3px;">※それ以降はずっと無料</div>
         </div>
 
-        <!-- 階段グラフコンテナ -->
+        <!-- 階段グラフコンテナ（3カラム構造・シンメトリー維持） -->
         <div class="step-graph" id="step-graph">
-           <!-- JSで中身生成 -->
+           <div class="step-group-left" id="step-left"></div>
+           <div class="step-center" id="step-center"></div>
+           <div class="step-group-right" id="step-right"></div>
         </div>
         
         <!-- 履歴表示エリア -->
@@ -1444,100 +1493,145 @@
       document.querySelectorAll(".d-remaining").forEach(el => el.innerText = data.remaining);
       document.getElementById("sub-price").innerText = Math.round(p / 36).toLocaleString();
 
-      const g = document.getElementById("step-graph");
+      const container = document.getElementById("step-graph");
       const hSection = document.getElementById("history-section-wrapper");
       const hList = document.getElementById("history-list-view");
       
-      if(g) {
-        g.innerHTML = "";
-        if(hList) hList.innerHTML = "";
-        
+      if(container) {
+        // 1. データ整理 (履歴)
         let history = [];
         if(data.sold_out_history) {
-          // 正規化
           history = data.sold_out_history.map(item => typeof item === 'object' ? item : { price: item, date: '---', title: '限定販売', count: '-' });
         }
-        
-        // 履歴がない場合はエリアごと隠す
+
+        // 2. 履歴リストDOM生成 (全履歴分)
+        if(hList) hList.innerHTML = "";
         if(!history || history.length === 0) {
             if(hSection) hSection.style.display = "none";
         } else {
             if(hSection) hSection.style.display = "block";
+            history.forEach(item => {
+                if(hList) {
+                    hList.innerHTML += `
+                      <li class="history-item">
+                        <div class="h-row-1">
+                          <span class="h-marker">◇</span>
+                          <span class="h-title">${item.title || '限定販売'}</span>
+                        </div>
+                        <div class="h-row-2">
+                          <span class="h-count">${item.count || '-'} 部</span>
+                          <span class="h-date">${item.date || '---'} 完売</span>
+                        </div>
+                      </li>
+                    `;
+                }
+            });
         }
+
+        // 3. グラフ生成ロジック：左右対称化
         
-        // Items: [...History, Current, Next, Future]
-        const allItems = [...history, { type: 'current', price: p }, { type: 'next', price: n }, { type: 'future' }];
-        const totalItems = allItems.length;
+        // --- 右側（未来）の構築 ---
+        // 要件: [Next] -> [改定予定] -> [...] の固定3ステップ
+        const rightItems = [
+            { type: 'next', price: n },
+            { type: 'future', title: '改定予定' },
+            { type: 'future2', title: '...' }
+        ];
+
+        // --- 左側（過去）の構築 ---
+        // 要件: 右側と「逆で同じ様になる」＝最大3ステップで表現
+        // 履歴数に応じて、直近のデータを表示し、古いものは省略(...)するか、
+        // 足りない場合はダミーを入れて位置を確保する。
         
-        // 階段計算ロジック (30% -> 100% へ均等割り)
+        let leftItems = [];
+        
+        if (history.length === 0) {
+            // 履歴なし: 全部ダミー
+            leftItems = [{type:'dummy'}, {type:'dummy'}, {type:'dummy'}];
+        } else if (history.length === 1) {
+            // 履歴1: ダミー2つ + 最新履歴
+            leftItems = [{type:'dummy'}, {type:'dummy'}, { ...history[0], type: 'history' }];
+        } else if (history.length === 2) {
+            // 履歴2: ダミー1つ + 履歴2つ
+            leftItems = [{type:'dummy'}, { ...history[0], type: 'history' }, { ...history[1], type: 'history' }];
+        } else if (history.length === 3) {
+            // 履歴3: そのまま3つ
+            leftItems = history.map(h => ({ ...h, type: 'history' }));
+        } else {
+            // 履歴4以上: [...] + 直近2つ
+            const last2 = history.slice(-2).map(h => ({ ...h, type: 'history' }));
+            const omittedItem = { type: 'omitted' };
+            leftItems = [omittedItem, ...last2];
+        }
+
+        // Center: 現在
+        const centerItem = { type: 'current', price: p };
+
+        // 4. 高さ計算 (リニア)
+        // 合計7本のバーに対して、30%〜100%まで高さを割り当てる
+        // Left: 0,1,2 | Center: 3 | Right: 4,5,6
         const minH = 30;
         const maxH = 100;
-        // totalItems - 1 で割ることで最後の要素を100%にする
-        const stepH = (maxH - minH) / (totalItems > 1 ? totalItems - 1 : 1);
+        const totalSteps = 7; // 固定7ステップ
+        const stepH = (maxH - minH) / (totalSteps - 1);
 
-        // 描画ループ
-        allItems.forEach((item, index) => {
-           const isHistory = index < history.length;
-           const isCurrent = index === history.length;
-           const isNext = index === history.length + 1;
-           const isFuture = index === history.length + 2;
-           
-           const h = minH + (stepH * index);
+        // 描画関数
+        const renderBar = (item, globalIndex) => {
+           const h = minH + (stepH * globalIndex);
            
            let barClass = "";
            let label = "";
            let date = "";
            let priceText = "";
 
-           if (isHistory) {
-             // 過去データ
+           if (item.type === 'history') {
              barClass = "sold";
-             date = item.date.split(' ')[0] || '';
-             // 過去データが3つ以上ある場合、過去バーの文字は非表示
-             if (history.length >= 3) {
-                barClass += " no-text";
-                priceText = "";
-             } else {
-                priceText = `¥${item.price.toLocaleString()}`;
-             }
-             
-             // 履歴リストへの追加
-             if(hList) {
-                hList.innerHTML += `
-                  <li class="history-item">
-                    <div class="h-row-1">
-                      <span class="h-marker">◇</span>
-                      <span class="h-title">${item.title || '限定販売'}</span>
-                    </div>
-                    <div class="h-row-2">
-                      <span class="h-count">${item.count || '-'} 部</span>
-                      <span class="h-date">${item.date || '---'} 完売</span>
-                    </div>
-                  </li>
-                `;
-             }
-           } else if (isCurrent) {
+             date = item.date ? item.date.split(' ')[0] : '';
+             priceText = `¥${Number(item.price).toLocaleString()}`;
+           } else if (item.type === 'omitted') {
+             barClass = "omitted";
+             priceText = "...";
+           } else if (item.type === 'current') {
              barClass = "active";
              label = `<div class="step-label">NOW</div>`;
              priceText = `¥${p.toLocaleString()}`;
-           } else if (isNext) {
+           } else if (item.type === 'next') {
              barClass = "next";
              label = `<div class="step-label-next"><span>NEXT</span><br><span>あと${data.remaining}名で</span></div>`;
              priceText = `¥${n.toLocaleString()}`;
-           } else if (isFuture) {
+           } else if (item.type === 'future') {
              barClass = "future";
              priceText = "改定予定";
+           } else if (item.type === 'future2') {
+             barClass = "future";
+             priceText = "...";
+           } else if (item.type === 'dummy') {
+             barClass = "dummy";
            }
 
-           // バー要素の生成 (矢印なし)
-           g.innerHTML += `
+           return `
              <div class="step-bar ${barClass}" style="height: ${h}%">
                ${label}
                <div class="step-date">${date}</div>
                ${priceText}
              </div>
            `;
-        });
+        };
+
+        // DOM注入
+        const leftEl = document.getElementById("step-left");
+        const centerEl = document.getElementById("step-center");
+        const rightEl = document.getElementById("step-right");
+        
+        let gIdx = 0;
+
+        leftEl.innerHTML = "";
+        leftItems.forEach(item => leftEl.innerHTML += renderBar(item, gIdx++));
+        
+        centerEl.innerHTML = renderBar(centerItem, gIdx++);
+        
+        rightEl.innerHTML = "";
+        rightItems.forEach(item => rightEl.innerHTML += renderBar(item, gIdx++));
       }
     }
     
