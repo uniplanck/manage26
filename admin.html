@@ -181,7 +181,16 @@
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
     import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-    const firebaseConfig = JSON.parse('{"apiKey":"","authDomain":"manage26-price.firebaseapp.com","projectId":"manage26-price","storageBucket":"manage26-price.firebasestorage.app","messagingSenderId":"405218108343","appId":"1:405218108343:web:3c91b61adac9e9e07ffe32","measurementId":"G-CDWBHCM00C"}');
+    // APIキーをindex.htmlと完全に同一のものに修正
+    const firebaseConfig = {
+      apiKey: "AIzaSyBy8hBH5DNX8GsVvnOfjmyyamc9nIPIR44",
+      authDomain: "manage26-price.firebaseapp.com",
+      projectId: "manage26-price",
+      storageBucket: "manage26-price.firebasestorage.app",
+      messagingSenderId: "405218108343",
+      appId: "1:405218108343:web:3c91b61adac9e9e07ffe32",
+      measurementId: "G-CDWBHCM00C"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
