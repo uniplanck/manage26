@@ -157,13 +157,21 @@
   .btn:active { transform: translateY(1px); }
   .btn i { margin-right: 12px; font-size: 1.4rem; }
 
-  /* LINE Color Button */
+  /* LINE Color Button (with Ripple Effect) */
   .btn-line-color {
     background: #06C755 !important;
     box-shadow: 0 10px 30px rgba(6,199,85,0.3), 0 4px 6px rgba(0,0,0,0.05) !important;
+    animation: pulse-line 2s infinite;
+  }
+  @keyframes pulse-line {
+    0% { box-shadow: 0 0 0 0 rgba(6,199,85,0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(6,199,85,0); }
+    100% { box-shadow: 0 0 0 0 rgba(6,199,85,0); }
   }
   .btn-line-color:hover {
-    box-shadow: 0 15px 40px rgba(6,199,85,0.4) !important;
+    box-shadow: 0 15px 40px rgba(6,199,85,0.5) !important;
+    animation: none;
+    transform: translateY(-3px);
   }
 
   /* 2. Skeleton Loading */
@@ -357,7 +365,7 @@
   /* VOICES */
   .voices { padding: 100px 0; background: #f8fafc; }
   .voices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
-  .voice-card { background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  .voice-card { background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: opacity 0.3s ease; }
   .voice-head { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
   .voice-avt { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #e2e8f0; }
   .voice-meta h4 { font-size: 1rem; margin: 0; font-weight: bold; }
@@ -387,36 +395,98 @@
 
   /* PRICING */
   .pricing-section { background: #f8fafc; padding: 100px 0; }
-  .price-card { background: #fff; border-radius: 24px; padding: 80px 40px; text-align: center; max-width: 700px; margin: 0 auto; box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; position: relative; overflow: hidden; }
-  .price-card::after { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(90deg, var(--accent), #60a5fa); }
   
-  /* PC用フォントサイズ設定 */
-  .price-card-title { font-size: 2.5rem; margin-bottom: 20px; line-height: 1.3; }
+  .price-card { 
+    background: #ffffff; 
+    border-radius: 24px; 
+    padding: 60px 40px; 
+    text-align: center; 
+    max-width: 700px; 
+    margin: 0 auto; 
+    box-shadow: 0 25px 60px -15px rgba(249, 115, 22, 0.25), 0 0 0 2px rgba(249, 115, 22, 0.2); 
+    border: 4px solid transparent;
+    background-clip: padding-box;
+    position: relative; 
+    overflow: hidden; 
+  }
+  .price-card::before {
+      content: ""; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #ea580c 100%);
+      z-index: -1;
+      border-radius: 26px;
+  }
+  .price-card::after { 
+    content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; 
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); 
+    transform: skewX(-20deg); animation: shine 5s infinite; pointer-events: none; z-index: 1;
+  }
+  @keyframes shine { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
 
-  .stock-alert { background: #fef2f2; color: #ef4444; padding: 8px 20px; border-radius: 50px; font-size: 0.95rem; font-weight: bold; display: inline-block; margin-bottom: 30px; border: 1px solid #fee2e2; animation: pulse 2s infinite; }
-  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-  .price-val { font-size: 4.5rem; font-weight: 900; color: var(--primary); font-family: var(--font-num); line-height: 1; }
-  .price-unit { font-size: 1.2rem; color: var(--text-light); font-weight: normal; margin-left: 5px; }
-  .price-per-day { font-size: 1rem; color: var(--accent); background: #eff6ff; padding: 8px 20px; border-radius: 30px; display: inline-block; margin-top: 15px; font-weight: bold; border: 1px solid #dbeafe; }
-  .price-message { margin-bottom: 40px; color: var(--text-light); font-size: 1rem; line-height: 1.8; }
-  .price-message p { margin: 0; }
-  /* スマホ用の改行調整 */
-  .price-message-text { display: block; }
-  .price-message-text .ib { display: inline-block; }
+  /* 価格カードリボン (購買意欲・限定性強調) */
+  .price-ribbon {
+    position: absolute; top: 25px; left: -35px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff; padding: 6px 40px; font-size: 0.8rem; font-weight: 900;
+    transform: rotate(-45deg); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 10; letter-spacing: 0.1em; text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  }
 
-  /* Nao's Message Section (RE-DESIGNED) */
+  .price-card-title { font-size: 2.2rem; margin-bottom: 25px; line-height: 1.4; color: var(--primary); font-weight: 900;}
+  .price-card-title .highlight { background: linear-gradient(transparent 60%, rgba(249,115,22,0.2) 60%); display: inline-block; padding: 0 5px;}
+  
+  .stock-alert { 
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
+    color: #fff; 
+    padding: 10px 25px; 
+    border-radius: 50px; 
+    font-size: 1.1rem; 
+    font-weight: 900; 
+    display: inline-block; 
+    margin-bottom: 25px; 
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    animation: pulse-danger 1.5s infinite; 
+    letter-spacing: 0.05em;
+  }
+  @keyframes pulse-danger { 
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 
+      70% { transform: scale(1.03); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 
+  }
+
+  .price-val { font-size: 5rem; font-weight: 900; color: #ea580c; font-family: var(--font-num); line-height: 1; letter-spacing: -0.02em; text-shadow: 2px 2px 0px rgba(234,88,12,0.1); }
+  .price-unit { font-size: 1.2rem; color: var(--text-main); font-weight: bold; margin-left: 5px; }
+  
+  /* サブスク換算バッジデザイン（インラインフレックスでベースラインと余白を制御） */
+  .price-per-day { 
+    font-size: 1.1rem; color: #fff; background: var(--primary); 
+    padding: 12px 25px; border-radius: 30px; display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 20px; font-weight: bold; line-height: 1;
+    box-shadow: 0 4px 10px rgba(15,23,42,0.2);
+  }
+  .price-per-day span { color: #fbbf24; font-size: 1.4rem; margin: 0 6px; line-height: 1; }
+
+  /* メッセージボックスの構造化 */
+  .price-message-box { 
+    background: #fff7ed; padding: 15px 20px; border-radius: 12px; border: 1px solid #ffedd5; margin-bottom: 30px; 
+  }
+  .price-auto-up-text { 
+    color: #ea580c; font-weight: bold; margin-bottom: 5px; 
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .price-early-text { font-size: 0.95rem; color: var(--text-main); line-height: 1.6; }
+
+  /* Nao's Message Section */
   .message-section { 
     max-width: 680px; 
     margin: 80px auto 0; 
-    padding: 60px 50px; /* 余白を広めに */
-    background: #fffbf0; /* 優しいクリーム色 */
-    border-radius: 4px; /* 便箋らしさ */
+    padding: 60px 50px;
+    background: #fffbf0; 
+    border-radius: 4px; 
     box-shadow: 0 10px 40px rgba(0,0,0,0.05);
     text-align: left; 
     position: relative;
     border: 1px solid rgba(0,0,0,0.03);
   }
-  /* 便箋の上部にライン装飾 */
   .message-section::before {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
     background: repeating-linear-gradient(45deg, #f97316, #f97316 10px, #ffffff 10px, #ffffff 20px, #2563eb 20px, #2563eb 30px, #ffffff 30px, #ffffff 40px);
@@ -436,7 +506,6 @@
   .msg-body { font-size: 1rem; line-height: 2.2; color: #475569; letter-spacing: 0.02em; }
   .msg-body p { margin-bottom: 1.5em; }
   
-  /* サインを右下に配置 */
   .msg-sign { 
     position: absolute; bottom: 30px; right: 50px;
     font-family: var(--font-sign); font-size: 2.5rem; color: var(--cta-main); 
@@ -451,52 +520,23 @@
   .roadmap li i { color: var(--accent); }
 
   /* =========================================
-     Step Graph (完全センター配置・等幅・シンメトリー版)
+     Step Graph (完全等幅・1階層化構造)
      ========================================= */
   .step-graph { 
     display: flex; 
     align-items: flex-end; 
-    justify-content: center; 
+    gap: 4px; /* これで隙間を均等に */
     width: 100%; 
     max-width: 800px;
     height: 160px; 
     margin: 40px auto; 
     padding-top: 30px; 
     position: relative; 
+    z-index: 2; 
   }
 
-  /* 3つのエリアに分割 */
-  .step-group-left, .step-group-right {
-    flex: 3; /* 左右等幅でスペースを確保 (3つ分) */
-    display: flex;
-    align-items: flex-end;
-    height: 100%;
-    gap: 4px;
-    min-width: 0; /* Flexboxの縮小対策 */
-  }
-  .step-group-left {
-    justify-content: flex-end; /* 右（中央）寄せ */
-    padding-right: 4px;
-  }
-  .step-group-right {
-    justify-content: flex-start; /* 左（中央）寄せ */
-    padding-left: 4px;
-  }
-  
-  /* 中央エリア (1つ分) */
-  .step-center {
-    flex: 1; 
-    height: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 10;
-  }
-
-  /* 階段バー (すべて等幅) */
   .step-bar { 
-    flex: 1; 
-    width: 100%; /* 親コンテナ内で等分 */
+    flex: 1; /* すべてのバーを無条件で等幅にする */
     background: #e2e8f0; 
     border-radius: 6px 6px 0 0; 
     position: relative; 
@@ -519,47 +559,24 @@
     z-index: 2; 
     transform: scale(1.05); 
     transform-origin: bottom center;
-    /* 幅は他と同じ */
   }
 
   .step-bar.sold { background: #cbd5e1; opacity: 0.9; }
-  
-  .step-bar.omitted { 
-      opacity: 0.5; 
-      background: #e2e8f0;
-  }
-  
+  .step-bar.omitted { opacity: 0.5; background: #e2e8f0; }
   .step-bar.future { background: #f1f5f9; color: #94a3b8; border: 1px dashed #cbd5e1; box-sizing: border-box; }
-  
-  /* ダミーバー（不可視・レイアウト維持用） */
-  .step-bar.dummy {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      pointer-events: none;
-  }
+  .step-bar.dummy { background: transparent; border: none; box-shadow: none; pointer-events: none; }
 
-  .step-date { 
-    position: absolute; top: -24px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.6rem; color: #94a3b8; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-  }
+  .step-date { position: absolute; top: -24px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.6rem; color: #94a3b8; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-  /* NEXTラベル */
-  .step-label-next {
-    position: absolute; top: -45px; left: 50%; transform: translateX(-50%); text-align: center; width: 200%; color: #94a3b8; line-height: 1.2; font-weight: bold; font-family: var(--font-num);
-  }
+  .step-label-next { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); text-align: center; width: 200%; color: #94a3b8; line-height: 1.2; font-weight: bold; font-family: var(--font-num); }
   .step-label-next span:first-child { font-size: 1rem; color: #64748b; }
   .step-label-next span:last-child { font-size: 0.6rem; opacity: 0.7; }
 
-  /* NOWラベル */
-  .step-label { 
-    position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.8rem; font-weight: 900; color: var(--cta-main); 
-  }
-  
-  /* 価格テキストなしクラス */
+  .step-label { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-size: 0.8rem; font-weight: 900; color: var(--cta-main); }
   .step-bar.no-text { font-size: 0; padding-bottom: 0; }
 
   /* History Section */
-  .history-section { margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 15px; display: none; /* JSで表示制御 */ }
+  .history-section { margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 15px; display: none; position: relative; z-index: 2; }
   .history-toggle { 
     background: none; border: none; color: #64748b; font-size: 0.9rem; 
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; 
@@ -570,14 +587,10 @@
   .history-toggle.open i.fa-chevron-down { transform: rotate(180deg); }
 
   .history-list { 
-    display: none; /* 初期非表示 */
-    margin-top: 10px; list-style: none; padding: 0; 
+    display: none; margin-top: 10px; list-style: none; padding: 0; 
     background: #f8fafc; border-radius: 12px; overflow: hidden;
   }
-  .history-item { 
-    padding: 12px 15px; border-bottom: 1px solid #e2e8f0; 
-    font-size: 0.85rem; text-align: left;
-  }
+  .history-item { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; text-align: left; }
   .history-item:last-child { border-bottom: none; }
 
   .h-row-1 { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
@@ -591,15 +604,18 @@
 
   /* Video Embed */
   .video-section { padding: 100px 0; background: #fff; text-align: center; border-top: 1px solid #e2e8f0; }
+  .video-title { font-size: 1.8rem; margin-bottom: 20px; font-weight: 900; color: var(--primary); }
   .video-embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 860px; margin: 40px auto 0; border-radius: 20px; box-shadow: 0 30px 70px rgba(0,0,0,0.2); border: 1px solid #eee; }
   .video-embed-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
   .video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(15,23,42,0.6); cursor: pointer; z-index: 10; transition: 0.3s; }
   .video-placeholder:hover { background: rgba(15,23,42,0.4); }
   .video-placeholder i { font-size: 5rem; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.3); }
 
-  /* FOOTER */
+  /* FOOTER PC */
   footer { background: #fff; padding: 60px 0 40px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 0.85rem; color: #94a3b8; }
-  .footer-links a { margin: 0 15px; color: #64748b; }
+  .footer-links { display: flex; justify-content: center; gap: 30px; }
+  .footer-links a { margin: 0; color: #64748b; }
+  .footer-copy { margin-top: 20px; }
 
   /* MOBILE STICKY */
   .mobile-sticky { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.5); padding: 15px 20px 30px; z-index: 100; display: none; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); text-align: center; transition: opacity 0.3s, transform 0.3s; }
@@ -619,116 +635,79 @@
   @media (max-width: 768px) {
     .sp-br { display: block; } .pc-br { display: none; }
     
-    /* 余白の大胆な削減 */
     .hero { padding: 80px 0 60px; }
     .reveal { padding-top: 40px !important; padding-bottom: 40px !important; }
-    .why-sec { padding: 30px 0 !important; } /* ★余白を1/3に */
+    .why-sec { padding: 30px 0 !important; } 
     
-    /* Browser Mockupのデザイン微調整（細くスタイリッシュに） */
     .browser-mockup { 
       border-width: 1px; 
-      border-color: rgba(0,0,0,0.06); /* より薄く */
+      border-color: rgba(0,0,0,0.06);
       box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
-      border-radius: 8px; /* 角丸を少し小さく */
+      border-radius: 8px;
     }
-    .browser-header { height: 22px; padding: 0 8px; } /* ヘッダーを細く */
-    .dot { width: 6px; height: 6px; margin-right: 3px; } /* ドットを小さく */
+    .browser-header { height: 22px; padding: 0 8px; } 
+    .dot { width: 6px; height: 6px; margin-right: 3px; }
 
-    /* H1完全制御: ブロック表示で確実に改行 */
     h1 { margin-bottom: 20px; line-height: 1.35; }
     .hero h1 .line-1, .hero h1 .line-2 { 
       display: block; 
-      font-size: clamp(1.6rem, 7vw, 2.5rem); /* 画面幅に応じて調整 */
+      font-size: clamp(1.6rem, 7vw, 2.5rem);
       white-space: nowrap; 
     }
     
-    .hero p { font-size: 0.9rem; text-align: center; margin: 0 auto; white-space: normal; display: block; padding: 0 10px; }
+    .hero-sub-text {
+        font-size: clamp(0.7rem, 3.5vw, 0.95rem) !important;
+        white-space: nowrap;
+        text-align: center;
+        margin: 0 auto;
+        display: block;
+    }
     
     .hero-visual { margin-top: 40px; }
     
-    /* Auth Badge Mobile - Visible & Adjusted */
-    /* メイン画像の左上に配置するスタイル */
     .auth-badge {
-      display: flex;
-      position: absolute; /* 親要素 .hero-visual に対して絶対配置 */
-      top: 0; left: 0;    /* 左上に固定 */
-      margin: 0;
-      transform: scale(0.85); /* 少し小さく */
-      transform-origin: top left;
-      z-index: 10;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(4px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      border-radius: 0 30px 30px 0; /* 左側は直角に */
-      border: 1px solid var(--accent);
-      border-left: none;
+      display: flex; position: absolute; top: 0; left: 0; margin: 0;
+      transform: scale(0.85); transform-origin: top left; z-index: 10;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(4px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 0 30px 30px 0; 
+      border: 1px solid var(--accent); border-left: none;
     }
     .auth-badge i { font-size: 1.2rem; }
     .badge-text { font-size: 0.75rem; text-align: left; line-height: 1.2; }
     .badge-text span { font-size: 0.65rem; }
 
-    /* 悩み訴求: 文節改行で美しく */
-    /* フォントサイズを 95%相当に拡大し、clampで調整 */
-    .pain-h2 { 
-      line-height: 1.4; 
-      font-size: clamp(1.3rem, 5.8vw, 1.9rem) !important; 
-    }
+    .pain-h2 { line-height: 1.4; font-size: clamp(1.3rem, 5.8vw, 1.9rem) !important; }
     .info-box { padding: 30px 20px !important; }
     
-    /* Story */
     .story h2 { font-size: 5.5vw; text-align: center; }
-    .story h2 span.ib { display: block; } /* 強制改行 */
+    .story h2 span.ib { display: block; }
     .story p { font-size: 0.95rem; padding: 0 5px; }
 
-    /* GASセクションのスマホデザイン昇華 */
-    /* タイトル独立・1行表示 */
     .why-gas-title { margin-bottom: 20px; color: #fff !important; }
     .why-gas-title .d-block { display: block; font-size: 6vw; white-space: nowrap; }
-    .why-gas-title .highlight { font-size: 7.5vw; } /* 強調部分を大きく */
+    .why-gas-title .highlight { font-size: 7.5vw; }
     .why-gas-sub { display: block; white-space: nowrap; font-size: 0.9rem; margin-top: 10px; }
     
-    .why-grid { margin-top: 20px; gap: 15px; } /* グリッド間隔短縮 */
+    .why-grid { margin-top: 20px; gap: 15px; }
 
-    /* Feature: 強制1カラム & 画像余白確保 */
-    .feature-block, .feature-block:nth-child(even) { 
-      flex-direction: column !important; /* 強制縦並び */
-      gap: 20px; margin-bottom: 60px; 
-    }
-    .feature-visual { 
-      order: 2; 
-      width: 100%; 
-      margin: 0; 
-      border-radius: 12px; 
-      margin-bottom: 15px;
-    }
+    .feature-block, .feature-block:nth-child(even) { flex-direction: column !important; gap: 20px; margin-bottom: 60px; }
+    .feature-visual { order: 2; width: 100%; margin: 0; border-radius: 12px; margin-bottom: 15px; }
     .feature-text { margin-bottom: 20px; order: 1; } 
     .feature-title { font-size: 6vw; text-align: center; margin-bottom: 15px; }
     .feature-text p { text-align: justify; }
 
-    /* Comparison: 天才デザイナーによるリッチな比較カード */
     .comp-container { display: none; }
     .comp-mobile { display: block; margin-top: 30px; }
     
     .comp-vs-card {
-      display: flex; /* Flexboxで横並び */
-      gap: 0; margin-bottom: 20px; 
+      display: flex; gap: 0; margin-bottom: 20px; 
       background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
       align-items: stretch; position: relative;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      overflow: visible; /* バッジをはみ出させる */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: visible;
     }
-    .comp-vs-left { 
-      flex: 1; text-align: center; padding: 20px 10px; 
-      border-right: 2px dashed #cbd5e1; 
-      background: #f8fafc; border-radius: 12px 0 0 12px;
-      display:flex; flex-direction:column; justify-content:center; 
-    }
-    .comp-vs-right { 
-      flex: 1; text-align: center; padding: 20px 10px; 
-      position:relative; border-radius: 0 12px 12px 0;
-      display:flex; flex-direction:column; justify-content:center;
-    }
-    /* 一番上のカード（コスト）だけデザインを変える */
+    .comp-vs-left { flex: 1; text-align: center; padding: 20px 10px; border-right: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 12px 0 0 12px; display:flex; flex-direction:column; justify-content:center; }
+    .comp-vs-right { flex: 1; text-align: center; padding: 20px 10px; position:relative; border-radius: 0 12px 12px 0; display:flex; flex-direction:column; justify-content:center; }
+    
     .comp-vs-card:first-child .comp-vs-left { background: #f0f7ff; }
     .comp-vs-card:first-child .comp-vs-right { background: #fff; }
     .comp-vs-card:first-child { border: 2px solid var(--accent); box-shadow: 0 5px 15px rgba(37, 99, 235, 0.15); }
@@ -741,46 +720,52 @@
     .comp-vs-pro-price { font-size: 1.4rem; color: var(--accent); font-weight:900; font-family: var(--font-num); line-height: 1; }
     .comp-vs-pro-text { font-size: 1rem; font-weight:900; color: var(--primary); display:flex; align-items:center; justify-content:center; gap:5px; }
     
-    /* 圧倒的No.1バッジ (見切れ対策済) */
-    .comp-tag { 
-      position: absolute; top: -14px; right: 10px; left: auto; transform: none;
-      background: var(--cta-main); color: #fff; font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); white-space: nowrap; z-index: 5;
-    }
+    .comp-tag { position: absolute; top: -14px; right: 10px; left: auto; transform: none; background: var(--cta-main); color: #fff; font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); white-space: nowrap; z-index: 5; }
 
-    /* Steps */
     .step-card:not(:last-child)::after { display: none; }
 
-    /* Pricing Mobile Adjustments */
-    .price-card { padding: 40px 20px; border-radius: 16px; }
-    /* スマホで確実に2行にするためのサイズ調整 */
-    .price-card-title { 
-      font-size: 1.5rem; 
-      line-height: 1.5; 
-      margin-bottom: 20px;
-    }
+    .price-card { padding: 50px 15px 40px; border-radius: 16px; border-width: 3px; }
+    .price-card::before { border-radius: 18px; }
+    .price-ribbon { top: 15px; left: -40px; padding: 4px 40px; font-size: 0.75rem; }
+
+    .price-card-title { font-size: 1.4rem; line-height: 1.5; margin-bottom: 20px; }
+    .stock-alert { font-size: 0.95rem; padding: 8px 15px; }
+    .price-val { font-size: 4rem; }
     
-    .price-message-text { font-size: 0.9rem; line-height: 1.6; margin-bottom: 10px; }
-    .price-message-text .ib { white-space: nowrap; }
+    /* 修正: 余白のアンバランス解消（上を狭く、下を少し広く視覚調整） */
+    .price-per-day { font-size: 0.95rem; padding: 6px 15px 8px !important; margin-top:15px; }
+    .price-per-day span { font-size: 1.25rem; margin: 0 2px; }
+
+    /* 修正: 枠はみ出し解消（padding削減＆vw値の見直し） */
+    .price-message-box { padding: 12px 5px !important; }
+    .price-auto-up-text { font-size: clamp(10px, 3.1vw, 15px) !important; white-space: nowrap; letter-spacing: -0.05em; display: block; width: 100%; overflow: hidden; text-align: center; }
+    .price-lifetime-text { font-size: clamp(9px, 3.1vw, 14px) !important; white-space: nowrap; letter-spacing: -0.05em; display: block; width: 100%; overflow: hidden; text-align: center; }
+
+    .price-early-text { font-size: clamp(11px, 3.4vw, 14px) !important; display: block; text-align: center; line-height: 1.5; }
+    .price-early-text .ib { white-space: nowrap; }
 
     .btn { width: 100%; padding: 18px 10px; font-size: 0.95rem; white-space: nowrap; height: 56px; }
     
-    /* Roadmap Mobile Optimization */
     .roadmap h4 { font-size: 0.9rem; }
-    .roadmap ul { font-size: clamp(0.7rem, 3.5vw, 0.8rem); } /* 1行に収まる極小サイズ */
+    .roadmap ul { font-size: clamp(0.7rem, 3.5vw, 0.8rem); }
     .roadmap li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
     .roadmap small { font-size: 0.7em; }
 
-    /* Note Alignment */
     .note-line { text-align: justify; text-justify: inter-ideograph; font-size: 0.8rem; line-height: 1.6; display: block; }
     
-    /* Nao Message Mobile */
     .message-section { padding: 30px 20px; margin-top: 40px; margin-bottom: 40px; }
     .msg-icon { top: -25px; width: 50px; height: 50px; }
     .msg-sign { bottom: 20px; right: 20px; font-size: 2rem; }
 
-    /* ★階段グラフ スマホ最適化★ */
-    .step-date { display: none; } /* スマホでは日時は非表示 */
-    .step-bar { font-size: 0.7rem; } /* 文字少し小さく */
+    .step-date { display: none; } 
+    .step-bar { font-size: 0.7rem; }
+
+    .footer-links { display: flex; flex-direction: row; justify-content: center; flex-wrap: nowrap; gap: 10px; }
+    .footer-links a { font-size: clamp(10px, 3vw, 14px); white-space: nowrap; }
+    .footer-copy { font-size: clamp(9px, 2.6vw, 14px); white-space: nowrap; margin-top: 15px; letter-spacing: -0.02em; }
+
+    /* 修正: 動画タイトルのスマホレスポンシブ */
+    .video-title { font-size: clamp(1.3rem, 5vw, 1.8rem); line-height: 1.4; text-align: center; }
   }
 </style>
 </head>
@@ -798,15 +783,13 @@
         <span class="hero-tag"><i class="fas fa-flask"></i> Beta Version 2026</span>
       </div>
       
-      <!-- H1の構造を変更して強制改行 -->
       <h1>
         <span class="line-1">クリエイターを名乗るなら、</span>
         <span class="line-2 text-gradient">事務作業に時間を溶かすな。</span>
       </h1>
       
-      <!-- スマホ対応: vwで絶対1行にする -->
-      <p style="margin-bottom:0;">動画編集者・ディレクターのために極限まで進化した、</p>
-      <p style="margin-bottom:40px;">買い切り型・最強案件管理システム。</p>
+      <p class="hero-sub-text" style="margin-bottom:0;">動画編集者・ディレクターのために極限まで進化した、</p>
+      <p class="hero-sub-text" style="margin-bottom:40px;">買い切り型・最強案件管理システム。</p>
       
       <div style="text-align:center;">
         <button id="hero-cta" onclick="scrollToPricing()" class="btn">
@@ -816,7 +799,6 @@
       </div>
 
       <div class="hero-visual">
-        <!-- スマホでは左上に配置されるバッジ -->
         <div class="auth-badge">
           <i class="fas fa-award"></i>
           <div class="badge-text">
@@ -839,11 +821,9 @@
   <!-- PAIN -->
   <section class="reveal" style="padding: 100px 0; background: #fff;">
     <div class="container">
-      <!-- 2行強制デザイン（HTML改行） -->
       <h2 class="pain-h2" style="text-align:center; margin-bottom:50px; line-height:1.2; font-size: clamp(1.8rem, 6vw, 2.5rem);">
         <span class="text-gradient">
           <span class="ib">こんな「冷や汗」を</span><span class="ib">かいた経験</span><br class="sp-br">
-          <!-- サイズ強調クラス text-scale-up を追加 -->
           <span class="ib text-scale-up">ありませんか？</span>
         </span>
       </h2>
@@ -877,7 +857,6 @@
   <!-- STORY -->
   <section class="story reveal">
     <div class="container story-content">
-      <!-- 2行強制デザイン -->
       <h2>
         <span class="ib">既存のツールでは、</span>
         <span class="ib">我々の現場に追いつかない</span>
@@ -895,7 +874,6 @@
   <!-- FEATURES -->
   <section class="features reveal">
     <div class="container">
-      <!-- F1 -->
       <div class="feature-block">
         <div class="feature-text">
           <div class="feature-num">01</div>
@@ -907,7 +885,6 @@
           <img src="06_案件gantt.png" alt="ガントチャート">
         </div>
       </div>
-      <!-- F2 -->
       <div class="feature-block">
         <div class="feature-text">
           <div class="feature-num">02</div>
@@ -919,7 +896,6 @@
           <img src="04_通期収支.png" alt="通期収支">
         </div>
       </div>
-      <!-- F3 -->
       <div class="feature-block">
         <div class="feature-text">
           <div class="feature-num">03</div>
@@ -937,7 +913,6 @@
           </div>
         </div>
       </div>
-       <!-- F4 -->
        <div class="feature-block">
         <div class="feature-text">
           <div class="feature-num">04</div>
@@ -952,11 +927,10 @@
     </div>
   </section>
 
-  <!-- WHY GAS (Re-Designed) -->
+  <!-- WHY GAS -->
   <section class="reveal why-sec">
     <div class="container">
       <div style="max-width: 900px; margin: 0 auto;">
-        <!-- デザイン昇華＆スマホ対応 -->
         <h2 class="why-gas-title">
           <span class="d-block">なぜ、</span>
           <span class="d-block why-gas-highlight">Googleスプレッドシート × GAS</span>
@@ -1029,10 +1003,8 @@
         </div>
       </div>
 
-      <!-- Mobile Cards (VS形式) -->
+      <!-- Mobile Cards -->
       <div class="comp-mobile">
-        
-        <!-- VS Card 1: コスト -->
         <div class="comp-vs-card pro-highlight">
           <div class="comp-tag">圧倒的No.1</div>
           <div class="comp-vs-left">
@@ -1045,8 +1017,6 @@
             <div style="font-size:0.7rem; font-weight:bold; color:var(--cta-main);">買い切り・追加0円</div>
           </div>
         </div>
-
-        <!-- VS Card 2: 自由度 -->
         <div class="comp-vs-card">
           <div class="comp-vs-left">
             <div class="comp-vs-title">他社ツール</div>
@@ -1058,8 +1028,6 @@
             <div style="font-size:0.7rem; color:#64748b;">項目も色も自分好みに</div>
           </div>
         </div>
-
-        <!-- VS Card 3: データ -->
         <div class="comp-vs-card">
           <div class="comp-vs-left">
             <div class="comp-vs-title">他社ツール</div>
@@ -1071,7 +1039,6 @@
             <div style="font-size:0.7rem; color:#64748b;">Googleドライブに保存</div>
           </div>
         </div>
-
       </div>
     </div>
   </section>
@@ -1111,7 +1078,7 @@
       <div id="voices-list-primary" class="voices-grid">
         <p style="text-align:center; width:100%; color:#94a3b8;">Loading reviews...</p>
       </div>
-
+      
       <div id="voices-list-secondary" class="voices-grid hidden-area" style="margin-top:30px; display:none;">
         <!-- More reviews will be loaded here -->
       </div>
@@ -1194,24 +1161,28 @@
     </div>
   </section>
 
-  <!-- PRICING CARD (ID attached) -->
+  <!-- PRICING CARD -->
   <section class="pricing-section reveal" id="final-pricing">
     <div class="container">
       <div class="price-card">
-        <div class="stock-alert">現在の価格での提供はあと <span class="d-remaining skeleton">--</span> 名</div>
+        <div class="price-ribbon"><span>限定オファー</span></div>
+        
+        <div class="stock-alert">
+          <i class="fas fa-fire-flame-curved"></i> 現在の価格での提供はあと <span class="d-remaining skeleton">--</span> 名
+        </div>
         
         <h3 class="price-card-title">
           <span class="ib">迷っている時間が、</span><br class="sp-br">
-          <span class="ib">一番の「損失」です。</span>
+          <span class="ib highlight">一番の「損失」です。</span>
         </h3>
         
-        <div class="price-message">
-          <p class="price-message-text">
-            <span class="ib">10名購入ごとに価格は､</span><span class="ib">自動的に改定されます｡</span>
+        <div class="price-message-box">
+          <p class="price-auto-up-text">
+            <i class="fas fa-arrow-trend-up"></i> 10名購入ごとに価格は自動的に改定されます。
           </p>
-          <p class="price-message-text">
-            <span class="ib">今決断した人だけが、</span><br>
-            <span class="ib">β版初期価格で</span><span class="ib">手に入れられるタイミングです。</span>
+          <p class="price-early-text">
+            <span class="ib">今決断した人だけが、</span>
+            <span class="ib">最安値であるβ版初期価格で</span><span class="ib">手に入れられるタイミングです。</span>
           </p>
         </div>
 
@@ -1219,16 +1190,16 @@
           <span class="price-val">¥<span class="d-price skeleton">--</span></span><span class="price-unit">(税込)</span>
           <br>
           <div class="price-per-day">
-            3年サブスク換算で 月額 約<span id="sub-price">--</span>円
+            3年サブスク換算で 月額 約 <span><span id="sub-price">--</span></span> 円
           </div>
-          <div style="font-size:0.75rem; color:#ef4444; font-weight:normal; margin-top:3px;">※それ以降はずっと無料</div>
+          <div class="price-lifetime-text" style="font-size:0.8rem; color:#dc2626; font-weight:bold; margin-top:15px;">
+            <i class="fas fa-ban"></i> それ以降の月額費用・追加費用は一生涯かかりません
+          </div>
         </div>
 
-        <!-- 階段グラフコンテナ（3カラム構造・シンメトリー維持） -->
-        <div class="step-graph" id="step-graph">
-           <div class="step-group-left" id="step-left"></div>
-           <div class="step-center" id="step-center"></div>
-           <div class="step-group-right" id="step-right"></div>
+        <!-- 階段グラフコンテナ -->
+        <div class="step-graph" id="step-graph-container">
+           <!-- JSで挿入 -->
         </div>
         
         <!-- 履歴表示エリア -->
@@ -1242,19 +1213,19 @@
           </ul>
         </div>
 
-        <!-- LINE Color Button (Link Fixed) -->
-        <a href="https://lin.ee/H1Ibs6S" target="_blank" rel="noopener" class="btn btn-line-color" style="margin-top: 20px; text-decoration: none;">
+        <!-- LINE Color Button -->
+        <a href="https://lin.ee/H1Ibs6S" target="_blank" rel="noopener" class="btn btn-line-color" style="margin-top: 30px; text-decoration: none; position: relative; z-index: 5;">
           <i class="fa-brands fa-line"></i> 公式LINEで詳細を受け取る
         </a>
         
         <!-- LINE追加時の注意書き -->
-        <div style="max-width: 480px; margin: 15px auto 0;">
+        <div style="max-width: 480px; margin: 15px auto 0; position: relative; z-index: 5;">
           <p style="font-size:0.8rem; color:#64748b; line-height:1.6; text-align: justify;">
             ※ メッセージが自動送信されない場合（過去に追加済の方など）は、トーク画面で <span style="font-weight:bold; color:var(--primary); white-space:nowrap;">『案件管理』</span> と送信してください。
           </p>
         </div>
         
-        <div class="roadmap">
+        <div class="roadmap" style="position: relative; z-index: 5;">
             <h4><i class="fas fa-gift"></i> 年内大型無料アップデート予定</h4>
             <ul>
                 <li><i class="fas fa-check-circle"></i> Discord双方向連携 <small>(より自動化につながる)</small></li>
@@ -1268,7 +1239,7 @@
             </p>
         </div>
 
-        <div class="note-box">
+        <div class="note-box" style="position: relative; z-index: 5;">
           <ul>
             <li>現在はベータ版としての提供です。正式版への移行時に、価格改定が行われる予定です。</li>
             <li>本シートは提携スクールの特典等で配布される可能性があります。重複購入による返金は致しかねますのでご了承ください。</li>
@@ -1319,10 +1290,9 @@
   <!-- VIDEO SECTION -->
   <section class="video-section reveal">
     <div class="container">
-      <h3 style="font-size:1.8rem; margin-bottom:20px;">案件管理シートProの全体像</h3>
+      <h3 class="video-title">案件管理シートProの全体像</h3>
       <div class="video-embed-container">
         <iframe src="https://drive.google.com/file/d/1-VE7j322LnyD33f7wD6LjalaPzjEfueF/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        <!-- クリックしたら消えるように設定 -->
         <div class="video-placeholder" onclick="this.style.opacity='0'; setTimeout(()=>{this.style.display='none'}, 300);">
           <i class="fas fa-play-circle"></i>
           <span style="font-weight:bold; color:#fff; font-size:1rem; margin-top:10px; display:block;">タップして再生</span>
@@ -1338,7 +1308,7 @@
         <a href="tokusho.html">特定商取引法に基づく表記</a>
         <a href="privacy.html">プライバシーポリシー</a>
       </div>
-      <p style="margin-top:20px;">&copy; 2026 Nao Yamao / 案件管理シートPro. All Rights Reserved.</p>
+      <p class="footer-copy">&copy; 2026 Nao Yamao / 案件管理シートPro. All Rights Reserved.</p>
     </div>
   </footer>
 
@@ -1493,89 +1463,67 @@
       document.querySelectorAll(".d-remaining").forEach(el => el.innerText = data.remaining);
       document.getElementById("sub-price").innerText = Math.round(p / 36).toLocaleString();
 
-      const container = document.getElementById("step-graph");
+      const container = document.getElementById("step-graph-container");
       const hSection = document.getElementById("history-section-wrapper");
       const hList = document.getElementById("history-list-view");
       
+      // 履歴DOM生成
+      let history = [];
+      if(data.sold_out_history) {
+        history = data.sold_out_history.map(item => typeof item === 'object' ? item : { price: item, date: '---', title: '限定販売', count: '-' });
+      }
+
+      if(hList) hList.innerHTML = "";
+      if(!history || history.length === 0) {
+          if(hSection) hSection.style.display = "none";
+      } else {
+          if(hSection) hSection.style.display = "block";
+          history.forEach(item => {
+              if(hList) {
+                  hList.innerHTML += `
+                    <li class="history-item">
+                      <div class="h-row-1">
+                        <span class="h-marker">◇</span>
+                        <span class="h-title">${item.title || '限定販売'}</span>
+                      </div>
+                      <div class="h-row-2">
+                        <span class="h-count">${item.count || '-'} 部</span>
+                        <span class="h-date">${item.date || '---'} 完売</span>
+                      </div>
+                    </li>
+                  `;
+              }
+          });
+      }
+
       if(container) {
-        // 1. データ整理 (履歴)
-        let history = [];
-        if(data.sold_out_history) {
-          history = data.sold_out_history.map(item => typeof item === 'object' ? item : { price: item, date: '---', title: '限定販売', count: '-' });
-        }
-
-        // 2. 履歴リストDOM生成 (全履歴分)
-        if(hList) hList.innerHTML = "";
-        if(!history || history.length === 0) {
-            if(hSection) hSection.style.display = "none";
-        } else {
-            if(hSection) hSection.style.display = "block";
-            history.forEach(item => {
-                if(hList) {
-                    hList.innerHTML += `
-                      <li class="history-item">
-                        <div class="h-row-1">
-                          <span class="h-marker">◇</span>
-                          <span class="h-title">${item.title || '限定販売'}</span>
-                        </div>
-                        <div class="h-row-2">
-                          <span class="h-count">${item.count || '-'} 部</span>
-                          <span class="h-date">${item.date || '---'} 完売</span>
-                        </div>
-                      </li>
-                    `;
-                }
-            });
-        }
-
-        // 3. グラフ生成ロジック：左右対称化
+        // ============================================
+        // 階段グラフの表示数を計5ステップ（1階層化）
+        // ============================================
         
-        // --- 右側（未来）の構築 ---
-        // 要件: [Next] -> [改定予定] -> [...] の固定3ステップ
         const rightItems = [
             { type: 'next', price: n },
-            { type: 'future', title: '改定予定' },
             { type: 'future2', title: '...' }
         ];
 
-        // --- 左側（過去）の構築 ---
-        // 要件: 右側と「逆で同じ様になる」＝最大3ステップで表現
-        // 履歴数に応じて、直近のデータを表示し、古いものは省略(...)するか、
-        // 足りない場合はダミーを入れて位置を確保する。
-        
         let leftItems = [];
-        
         if (history.length === 0) {
-            // 履歴なし: 全部ダミー
-            leftItems = [{type:'dummy'}, {type:'dummy'}, {type:'dummy'}];
+            leftItems = [{type:'dummy'}, {type:'dummy'}];
         } else if (history.length === 1) {
-            // 履歴1: ダミー2つ + 最新履歴
-            leftItems = [{type:'dummy'}, {type:'dummy'}, { ...history[0], type: 'history' }];
-        } else if (history.length === 2) {
-            // 履歴2: ダミー1つ + 履歴2つ
-            leftItems = [{type:'dummy'}, { ...history[0], type: 'history' }, { ...history[1], type: 'history' }];
-        } else if (history.length === 3) {
-            // 履歴3: そのまま3つ
-            leftItems = history.map(h => ({ ...h, type: 'history' }));
+            leftItems = [{type:'dummy'}, { ...history[0], type: 'history' }];
         } else {
-            // 履歴4以上: [...] + 直近2つ
-            const last2 = history.slice(-2).map(h => ({ ...h, type: 'history' }));
+            const last1 = history.slice(-1).map(h => ({ ...h, type: 'history' }));
             const omittedItem = { type: 'omitted' };
-            leftItems = [omittedItem, ...last2];
+            leftItems = [omittedItem, ...last1];
         }
 
-        // Center: 現在
         const centerItem = { type: 'current', price: p };
 
-        // 4. 高さ計算 (リニア)
-        // 合計7本のバーに対して、30%〜100%まで高さを割り当てる
-        // Left: 0,1,2 | Center: 3 | Right: 4,5,6
         const minH = 30;
         const maxH = 100;
-        const totalSteps = 7; // 固定7ステップ
+        const totalSteps = 5; 
         const stepH = (maxH - minH) / (totalSteps - 1);
 
-        // 描画関数
         const renderBar = (item, globalIndex) => {
            const h = minH + (stepH * globalIndex);
            
@@ -1618,20 +1566,14 @@
            `;
         };
 
-        // DOM注入
-        const leftEl = document.getElementById("step-left");
-        const centerEl = document.getElementById("step-center");
-        const rightEl = document.getElementById("step-right");
-        
+        // DOMへ一括挿入
         let gIdx = 0;
-
-        leftEl.innerHTML = "";
-        leftItems.forEach(item => leftEl.innerHTML += renderBar(item, gIdx++));
+        let html = "";
+        leftItems.forEach(item => html += renderBar(item, gIdx++));
+        html += renderBar(centerItem, gIdx++);
+        rightItems.forEach(item => html += renderBar(item, gIdx++));
         
-        centerEl.innerHTML = renderBar(centerItem, gIdx++);
-        
-        rightEl.innerHTML = "";
-        rightItems.forEach(item => rightEl.innerHTML += renderBar(item, gIdx++));
+        container.innerHTML = html;
       }
     }
     
@@ -1664,7 +1606,7 @@
         }
     };
     
-    // Smooth Scroll Helper (修正: #final-pricing へスクロール)
+    // Smooth Scroll Helper
     window.scrollToPricing = () => {
       const el = document.getElementById('final-pricing'); // IDを直接指定
       if (!el) return;
@@ -1672,16 +1614,14 @@
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
     
-    // Sticky Footer Logic (修正: 価格セクションが見えたら消える)
+    // Sticky Footer Logic
     const heroBtn = document.getElementById('hero-cta');
     const pricingSec = document.getElementById('final-pricing');
     const stickyFooter = document.getElementById('sticky-footer');
     
     if (heroBtn && stickyFooter && pricingSec) {
-      // 1. ヒーローボタンの監視
       const heroObs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            // ヒーローボタンが見えなくなったらフッターを表示候補にする
             if (!entry.isIntersecting) {
                 stickyFooter.dataset.heroHidden = "true";
             } else {
@@ -1692,10 +1632,8 @@
       });
       heroObs.observe(heroBtn);
       
-      // 2. 価格セクションの監視
       const pricingObs = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
-              // 価格セクションが見えている間はフッターを隠す
               if (entry.isIntersecting) {
                   stickyFooter.dataset.pricingVisible = "true";
               } else {
